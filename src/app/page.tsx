@@ -9,6 +9,8 @@ import Satzbauer from '@/components/minigames/Satzbauer';
 import BuergerQuiz from '@/components/minigames/BuergerQuiz';
 import KaffeeMatch from '@/components/minigames/KaffeeMatch';
 import Inventory from '@/components/ui/Inventory';
+import SprachschuleInterior from '@/components/game/SprachschuleInterior';
+import MuseumInteriorModal from '@/components/ui/MuseumInteriorModal';
 
 // Dynamically load Game component with SSR disabled to guarantee Phaser only mounts on client
 const Game = dynamic(() => import('@/components/game/Game'), {
@@ -45,6 +47,10 @@ export default function Home() {
       <Satzbauer />
       <BuergerQuiz />
       <KaffeeMatch />
+
+      {/* 4d. Sprachschule & Museum Interiors */}
+      <SprachschuleInterior />
+      <MuseumInteriorModal />
 
       {/* 5. React Inventory Overlay Layer */}
       <Inventory />
