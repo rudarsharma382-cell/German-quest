@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import HUD from '@/components/ui/HUD';
 import DialogueBox from '@/components/ui/DialogueBox';
 import WortBlitz from '@/components/minigames/WortBlitz';
+import Inventory from '@/components/ui/Inventory';
 
 // Dynamically load Game component with SSR disabled to guarantee Phaser only mounts on client
 const Game = dynamic(() => import('@/components/game/Game'), {
@@ -32,6 +33,9 @@ export default function Home() {
 
       {/* 4. React Minigame Overlay Layer */}
       <WortBlitz />
+
+      {/* 5. React Inventory Overlay Layer */}
+      <Inventory />
     </main>
   );
 }

@@ -1,0 +1,67 @@
+{
+  "lukas_intro": {
+    "id": "lukas_intro",
+    "speaker": "Lukas (Stadtwache)",
+    "avatar": "/characters/Lukas.png",
+    "text": "Hallo! Willkommen in Deutschstadt! Ich bin Lukas, dein Begleiter. Hier lernst du die deutsche Sprache spielerisch. Wie kann ich dir helfen?",
+    "translation": "Hello! Welcome to German City! I am Lukas, your guide. Here you will learn German playfully. How can I help you?",
+    "options": [
+      {
+        "id": "opt_start",
+        "label": "Wo soll ich anfangen? (Where should I start?)",
+        "nextDialogueId": "lukas_quest_baeckerei"
+      },
+      {
+        "id": "opt_about",
+        "label": "Erzähl mir von der Stadt! (Tell me about the town!)",
+        "nextDialogueId": "lukas_about_city"
+      },
+      {
+        "id": "opt_leave",
+        "label": "Auf Wiedersehen! (Goodbye!)",
+        "nextDialogueId": "lukas_goodbye"
+      }
+    ]
+  },
+  "lukas_quest_baeckerei": {
+    "id": "lukas_quest_baeckerei",
+    "speaker": "Lukas (Stadtwache)",
+    "avatar": "/characters/Lukas.png",
+    "text": "Gehe nach Nordwesten zur Bäckerei mit der rot-weißen Markise! Dort kannst du das Minispiel 'Wort-Blitz' spielen und die Artikel (der, die, das) trainieren.",
+    "translation": "Head northwest to the bakery with the red-and-white awning! There you can play the 'Word Blitz' minigame and train articles (der, die, das).",
+    "options": [
+      {
+        "id": "opt_baeckerei_go",
+        "label": "Super, danke! Ich gehe sofort hin. (Great, thanks! I'll head there right away.)",
+        "nextDialogueId": "lukas_goodbye"
+      },
+      {
+        "id": "opt_back",
+        "label": "Ich habe noch eine Frage. (I have another question.)",
+        "nextDialogueId": "lukas_intro"
+      }
+    ]
+  },
+  "lukas_about_city": {
+    "id": "lukas_about_city",
+    "speaker": "Lukas (Stadtwache)",
+    "avatar": "/characters/Lukas.png",
+    "text": "Deutschstadt ist berühmt für seinen historischen Marktplatz und den Brunnen. Du kannst Vokabeln sammeln, Aufgaben lösen und dein Inventar mit [I] öffnen!",
+    "translation": "German City is famous for its historic market square and fountain. You can collect vocabulary, complete quests, and open your inventory with [I]!",
+    "options": [
+      {
+        "id": "opt_back",
+        "label": "Alles klar, verstanden! (All clear, understood!)",
+        "nextDialogueId": "lukas_intro"
+      }
+    ]
+  },
+  "lukas_goodbye": {
+    "id": "lukas_goodbye",
+    "speaker": "Lukas (Stadtwache)",
+    "avatar": "/characters/Lukas.png",
+    "text": "Viel Erfolg beim Lernen! Bis später! (Tschüss!)",
+    "translation": "Good luck with your learning! See you later! (Bye!)",
+    "options": []
+  }
+}
