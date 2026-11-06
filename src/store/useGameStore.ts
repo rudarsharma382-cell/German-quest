@@ -10,7 +10,9 @@ export type UIOverlayType =
   | 'bahnhof'
   | 'satzbauer'
   | 'buergerquiz'
-  | 'kaffee';
+  | 'kaffee'
+  | 'sprachschule_interior'
+  | 'museum_interior';
 
 export interface DialogueOption {
   id: string;
@@ -61,6 +63,7 @@ export interface GameState {
   // Inventory & Quests
   inventory: InventoryItem[];
   quests: Quest[];
+  historyJournal: string[];
 
   // Settings
   soundEnabled: boolean;
@@ -91,6 +94,8 @@ export interface GameState {
   useItem: (itemId: string) => void;
   addItem: (item: InventoryItem) => void;
   updateQuestProgress: (questId: string, amount: number) => void;
+  unlockHistoryJournal: (exhibitId: string) => void;
+  openSprachschuleInterior: () => void;
   resetPlayerStats: () => void;
 }
 
@@ -101,6 +106,7 @@ export const useGameStore = create<GameState>((set) => ({
 
   inventory: defaultItems as InventoryItem[],
   quests: defaultQuests as Quest[],
+  historyJournal: [],
   soundEnabled: true,
   virtualControlsEnabled: false,
 
@@ -257,6 +263,19 @@ export const useGameStore = create<GameState>((set) => ({
       };
     }),
 
+  unlockHistoryJournal: (exhibitId) =>
+    set((state) => {
+      if (state.historyJournal.includes(exhibitId)) return state;
+      return {
+        historyJournal: [...state.historyJournal, exhibitId],
+      };
+    }),
+
+  openSprachschuleInterior: () =>
+    set(() => ({
+      activeOverlay: 'sprachschule_interior',
+    })),
+
   resetPlayerStats: () =>
     set(() => ({
       xp: 0,
@@ -264,6 +283,7 @@ export const useGameStore = create<GameState>((set) => ({
       level: 1,
       inventory: defaultItems as InventoryItem[],
       quests: defaultQuests as Quest[],
+      historyJournal: [],
       activeOverlay: 'none',
       currentDialogue: null,
       interactionPrompt: null,

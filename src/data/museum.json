@@ -1,0 +1,42 @@
+[
+  {
+    "id": "berlin_wall",
+    "exhibit": "Der Fall der Berliner Mauer (1989)",
+    "translated": "The Fall of the Berlin Wall",
+    "fact": "Am 9. November 1989 fiel die Berliner Mauer, was zur Wiedervereinigung Deutschlands im Jahr 1990 führte.",
+    "factEnglish": "On November 9, 1989, the Berlin Wall fell, leading to German reunification in 1990.",
+    "icon": "Monument",
+    "trivia": {
+      "question": "In welchem Jahr fiel die Berliner Mauer?",
+      "choices": ["1985", "1989", "1991", "1993"],
+      "answerIndex": 1
+    }
+  },
+  {
+    "id": "gutenberg",
+    "exhibit": "Johannes Gutenberg",
+    "translated": "The Printing Press",
+    "fact": "Um 1440 erfand Johannes Gutenberg in Mainz den modernen Buchdruck.",
+    "factEnglish": "Around 1440, Johannes Gutenberg invented the modern printing press in Mainz.",
+    "icon": "BookCopy",
+    "trivia": {
+      "question": "Wer hat den modernen Buchdruck erfunden?",
+      "choices": ["Albert Einstein", "Martin Luther", "Johannes Gutenberg", "Otto von Bismarck"],
+      "answerIndex": 2
+    }
+  },
+  {
+    "id": "beethoven",
+    "exhibit": "Ludwig van Beethoven",
+    "translated": "Classical Music Master",
+    "fact": "Ludwig van Beethoven wurde 1770 in Bonn geboren und komponierte Meisterwerke wie die 9. Sinfonie.",
+    "factEnglish": "Ludwig van Beethoven was born in 1770 in Bonn and composed masterpieces like the 9th Symphony.",
+    "icon": "Music",
+    "trivia": {
+      "question": "In welcher deutschen Stadt wurde Beethoven geboren?",
+      "choices": ["Berlin", "München", "Bonn", "Hamburg"],
+      "answerIndex": 2
+    }
+  }
+]
+
