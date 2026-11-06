@@ -1,0 +1,58 @@
+[
+  {
+    "id": "brezel",
+    "name": "Brezel",
+    "article": "die",
+    "plural": "die Brezeln",
+    "translation": "pretzel",
+    "description": "Frisch gebacken und knusprig mit Salz. (+15 XP)",
+    "cost": 15,
+    "icon": "Croissant",
+    "quantity": 1
+  },
+  {
+    "id": "kaffee",
+    "name": "Kaffee",
+    "article": "der",
+    "plural": "die Kaffees",
+    "translation": "coffee",
+    "description": "Heißer schwarzer Filterkaffee. Erhöht die Aufmerksamkeit!",
+    "cost": 20,
+    "icon": "Coffee",
+    "quantity": 1
+  },
+  {
+    "id": "woerterbuch",
+    "name": "Wörterbuch",
+    "article": "das",
+    "plural": "die Wörterbücher",
+    "translation": "dictionary",
+    "description": "Ein dickes Buch mit allen Regeln der deutschen Sprache.",
+    "cost": 50,
+    "icon": "BookOpen",
+    "quantity": 1
+  },
+  {
+    "id": "stadtkarte",
+    "name": "Stadtkarte",
+    "article": "die",
+    "plural": "die Stadtkarten",
+    "translation": "city map",
+    "description": "Zeigt alle Straßen und Sehenswürdigkeiten von Deutschstadt.",
+    "cost": 10,
+    "icon": "Map",
+    "quantity": 1
+  },
+  {
+    "id": "apfel",
+    "name": "Apfel",
+    "article": "der",
+    "plural": "die Äpfel",
+    "translation": "apple",
+    "description": "Ein saftiger roter Apfel vom Marktplatz.",
+    "cost": 5,
+    "icon": "Apple",
+    "quantity": 2
+  }
+]
+

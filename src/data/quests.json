@@ -1,0 +1,23 @@
+[
+  {
+    "id": "welcome_quest",
+    "title": "Willkommen in Deutschstadt",
+    "description": "Sprich mit Lukas auf dem Marktplatz.",
+    "target": 1,
+    "current": 0,
+    "completed": false,
+    "xpReward": 25,
+    "coinReward": 10
+  },
+  {
+    "id": "wort_blitz_quest",
+    "title": "Das Artikel-Training",
+    "description": "Besuche die Bäckerei und erreiche 50 Punkte in Wort-Blitz.",
+    "target": 50,
+    "current": 0,
+    "completed": false,
+    "xpReward": 50,
+    "coinReward": 25
+  }
+]
+

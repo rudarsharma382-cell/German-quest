@@ -1,0 +1,99 @@
+[
+  {
+    "id": 1,
+    "word": "Apfel",
+    "article": "der",
+    "english": "apple",
+    "category": "Essen & Trinken",
+    "hint": "Masculine (fruit ending in -el is often der)"
+  },
+  {
+    "id": 2,
+    "word": "Brot",
+    "article": "das",
+    "english": "bread",
+    "category": "Essen & Trinken",
+    "hint": "Neuter"
+  },
+  {
+    "id": 3,
+    "word": "Katze",
+    "article": "die",
+    "english": "cat",
+    "category": "Tiere",
+    "hint": "Feminine (words ending in -e are often die)"
+  },
+  {
+    "id": 4,
+    "word": "Hund",
+    "article": "der",
+    "english": "dog",
+    "category": "Tiere",
+    "hint": "Masculine"
+  },
+  {
+    "id": 5,
+    "word": "Buch",
+    "article": "das",
+    "english": "book",
+    "category": "Gegenstände",
+    "hint": "Neuter"
+  },
+  {
+    "id": 6,
+    "word": "Sonne",
+    "article": "die",
+    "english": "sun",
+    "category": "Natur",
+    "hint": "Feminine"
+  },
+  {
+    "id": 7,
+    "word": "Mond",
+    "article": "der",
+    "english": "moon",
+    "category": "Natur",
+    "hint": "Masculine"
+  },
+  {
+    "id": 8,
+    "word": "Wasser",
+    "article": "das",
+    "english": "water",
+    "category": "Essen & Trinken",
+    "hint": "Neuter"
+  },
+  {
+    "id": 9,
+    "word": "Zeitung",
+    "article": "die",
+    "english": "newspaper",
+    "category": "Gegenstände",
+    "hint": "Feminine (words ending in -ung are always die!)"
+  },
+  {
+    "id": 10,
+    "word": "Kaffee",
+    "article": "der",
+    "english": "coffee",
+    "category": "Essen & Trinken",
+    "hint": "Masculine"
+  },
+  {
+    "id": 11,
+    "word": "Haus",
+    "article": "das",
+    "english": "house",
+    "category": "Gebäude",
+    "hint": "Neuter"
+  },
+  {
+    "id": 12,
+    "word": "Blume",
+    "article": "die",
+    "english": "flower",
+    "category": "Natur",
+    "hint": "Feminine"
+  }
+]
+
