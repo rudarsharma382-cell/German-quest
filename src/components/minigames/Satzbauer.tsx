@@ -183,15 +183,20 @@ export default function Satzbauer() {
         setOverlay('none');
         return;
       }
+      // A focused button already receives native Enter/Space activation.
+      const onFocusedButton = Boolean(
+        (e.target as HTMLElement | null)?.closest('button:not([disabled])')
+      );
+
       if (!started) {
-        if (e.code === 'Enter' || e.code === 'Space') {
+        if ((e.code === 'Enter' || e.code === 'Space') && !onFocusedButton) {
           e.preventDefault();
           setStarted(true);
         }
         return;
       }
       if (finished) return;
-      if (e.code === 'Enter' || e.code === 'Space') {
+      if ((e.code === 'Enter' || e.code === 'Space') && !onFocusedButton) {
         e.preventDefault();
         if (feedback === null) handleCheck();
         else handleContinue();
@@ -433,7 +438,7 @@ export default function Satzbauer() {
       )}
 
       <div className="mt-4 border-t-2 border-slate-700 pt-2 text-center text-[8px] text-slate-500">
-        [ENTER] Prüfen/Weiter · [ESC] Schließen
+        [↑↓←→] Wort wählen · [ENTER] Legen/Prüfen · [ESC] Schließen
       </div>
     </MinigameFrame>
   );

@@ -38,6 +38,8 @@ export class MainScene extends Phaser.Scene {
   };
   private spaceKey!: Phaser.Input.Keyboard.Key;
   private eKey!: Phaser.Input.Keyboard.Key;
+  private enterKey!: Phaser.Input.Keyboard.Key;
+  private lastInteractionRequest = 0;
 
   private exclamationBadge!: Phaser.GameObjects.Container;
   private badgeTween!: Phaser.Tweens.Tween;
@@ -210,17 +212,35 @@ export class MainScene extends Phaser.Scene {
       }) as any;
       this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
       this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+      // TV remotes send OK/Enter; treat it as the interact key too.
+      this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     }
+
+    // Ignore any interaction request queued before the scene came up.
+    this.lastInteractionRequest = useGameStore.getState().interactionRequest;
   }
 
   update() {
     const store = useGameStore.getState();
 
+    // Consume on-screen action-button requests every frame, even during an
+    // overlay, so a double tap cannot reopen a minigame after closing it.
+    const interactionRequested = store.interactionRequest !== this.lastInteractionRequest;
+    this.lastInteractionRequest = store.interactionRequest;
+
     // 1. If an overlay is active, freeze player
     if (store.activeOverlay !== 'none') {
       this.player.setVelocity(0, 0);
+      // Swallow keys pressed while typing/answering so they do not fire again
+      // the instant the overlay closes.
+      Phaser.Input.Keyboard.JustDown(this.spaceKey);
+      Phaser.Input.Keyboard.JustDown(this.eKey);
+      Phaser.Input.Keyboard.JustDown(this.enterKey);
       return;
     }
+
+    // Prompts adapt to the active control scheme (touch joystick vs. keyboard).
+    const interactHint = store.virtualControlsEnabled ? '[A]' : '[SPACE]';
 
     // 2. Proximity Detection to Lukas & 2D Institutions
     const pX = this.player.x;
@@ -255,25 +275,25 @@ export class MainScene extends Phaser.Scene {
 
     if (distLukas <= 68) {
       currentTarget = 'lukas';
-      store.setInteractionPrompt('[SPACE] Mit Lukas sprechen');
+      store.setInteractionPrompt(`${interactHint} Mit Lukas sprechen`);
     } else if (distBakery <= 55) {
       currentTarget = 'bakery';
-      store.setInteractionPrompt('[SPACE] Bäckerei betreten (Wort-Blitz)');
+      store.setInteractionPrompt(`${interactHint} Bäckerei betreten (Wort-Blitz)`);
     } else if (distLibrary <= 55) {
       currentTarget = 'library';
-      store.setInteractionPrompt('[SPACE] Bibliothek betreten (Satz-Bauer)');
+      store.setInteractionPrompt(`${interactHint} Bibliothek betreten (Satz-Bauer)`);
     } else if (distTownHall <= 60) {
       currentTarget = 'townhall';
-      store.setInteractionPrompt('[SPACE] Rathaus betreten (Bürger-Quiz)');
+      store.setInteractionPrompt(`${interactHint} Rathaus betreten (Bürger-Quiz)`);
     } else if (distCafe <= 55) {
       currentTarget = 'cafe';
-      store.setInteractionPrompt('[SPACE] Café betreten (Speisekarten-Match)');
+      store.setInteractionPrompt(`${interactHint} Café betreten (Speisekarten-Match)`);
     } else if (distBraun <= 60) {
       currentTarget = 'braun';
-      store.setInteractionPrompt('[SPACE] Mit Herrn Braun sprechen');
+      store.setInteractionPrompt(`${interactHint} Mit Herrn Braun sprechen`);
     } else if (distBahnhof <= 62) {
       currentTarget = 'bahnhof';
-      store.setInteractionPrompt('[SPACE] Fahrkarten-Schalter öffnen');
+      store.setInteractionPrompt(`${interactHint} Fahrkarten-Schalter öffnen`);
     } else {
       if (this.activeNearbyTarget !== null) {
         store.setInteractionPrompt(null);
@@ -282,11 +302,12 @@ export class MainScene extends Phaser.Scene {
 
     this.activeNearbyTarget = currentTarget;
 
-    // 3. Handle Interaction Key Press (SPACE or E)
+    // 3. Handle Interaction (keyboard SPACE/E/ENTER or the on-screen A button)
     const spaceJustDown = Phaser.Input.Keyboard.JustDown(this.spaceKey);
     const eJustDown = Phaser.Input.Keyboard.JustDown(this.eKey);
+    const enterJustDown = Phaser.Input.Keyboard.JustDown(this.enterKey);
 
-    if (currentTarget && (spaceJustDown || eJustDown)) {
+    if (currentTarget && (spaceJustDown || eJustDown || enterJustDown || interactionRequested)) {
       this.player.setVelocity(0, 0);
       store.setInteractionPrompt(null);
 
@@ -327,7 +348,7 @@ export class MainScene extends Phaser.Scene {
       return;
     }
 
-    // 4. Player Movement Controls (WASD & Arrows)
+    // 4. Player Movement Controls (WASD, Arrows & virtual joystick)
     const speed = 180;
     let vx = 0;
     let vy = 0;
@@ -342,10 +363,15 @@ export class MainScene extends Phaser.Scene {
     if (up) vy -= 1;
     if (down) vy += 1;
 
-    if (vx !== 0 && vy !== 0) {
-      const factor = Math.SQRT1_2;
-      vx *= factor;
-      vy *= factor;
+    // Analog input from the touch joystick (already normalized to a unit circle).
+    vx += store.virtualInput.x;
+    vy += store.virtualInput.y;
+
+    // Never let combined input exceed walking speed (keeps diagonals even).
+    const magnitude = Math.hypot(vx, vy);
+    if (magnitude > 1) {
+      vx /= magnitude;
+      vy /= magnitude;
     }
 
     this.player.setVelocity(vx * speed, vy * speed);

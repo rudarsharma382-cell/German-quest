@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGameStore, InventoryItem } from '@/store/useGameStore';
 import bahnhofData from '@/data/bahnhof.json';
 import PixelButton from '@/components/ui/PixelButton';
+import { useDpadNavigation } from '@/hooks/useDpadNavigation';
 import { soundFx } from '@/utils/audio';
 import {
   Train,
@@ -93,6 +94,9 @@ function DepartureBoard({ highlight }: { highlight?: string }) {
 export default function FahrkartenSchalter() {
   const { activeOverlay, setOverlay, addXP, addCoins, addItem, updateQuestProgress } =
     useGameStore();
+
+  const frameRef = useRef<HTMLDivElement>(null);
+  useDpadNavigation(activeOverlay === 'bahnhof', frameRef);
 
   const [started, setStarted] = useState(false);
   const [roundIndex, setRoundIndex] = useState(0);
@@ -189,8 +193,14 @@ export default function FahrkartenSchalter() {
         return;
       }
 
+      // If a D-pad focus sits on an enabled button, let the browser's native
+      // Enter/Space activation handle it instead of firing twice.
+      const onFocusedButton = Boolean(
+        (e.target as HTMLElement | null)?.closest('button:not([disabled])')
+      );
+
       if (!started) {
-        if (e.code === 'Enter' || e.code === 'Space') {
+        if ((e.code === 'Enter' || e.code === 'Space') && !onFocusedButton) {
           e.preventDefault();
           setStarted(true);
         }
@@ -205,7 +215,7 @@ export default function FahrkartenSchalter() {
           e.preventDefault();
           handleAnswer(num - 1);
         }
-      } else if (e.code === 'Enter' || e.code === 'Space') {
+      } else if ((e.code === 'Enter' || e.code === 'Space') && !onFocusedButton) {
         e.preventDefault();
         handleNext();
       }
@@ -220,7 +230,10 @@ export default function FahrkartenSchalter() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 font-pixel select-none backdrop-blur-sm">
-      <div className="relative max-h-[94vh] w-full max-w-2xl overflow-y-auto border-4 border-black bg-slate-900 text-white shadow-pixel-lg">
+      <div
+        ref={frameRef}
+        className="relative max-h-[94vh] w-full max-w-2xl overflow-y-auto border-4 border-black bg-slate-900 text-white shadow-pixel-lg"
+      >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b-4 border-black bg-amber-400 px-4 py-2.5 text-black">
           <div className="flex items-center gap-2">

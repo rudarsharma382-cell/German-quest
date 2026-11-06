@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGameStore, DialoguePayload, UIOverlayType } from '@/store/useGameStore';
 import { MessageSquare, ArrowRight, CornerDownLeft } from 'lucide-react';
 import { soundFx } from '@/utils/audio';
+import { useDpadNavigation } from '@/hooks/useDpadNavigation';
 import dialogueTree from '@/data/dialogue.json';
 
 export default function DialogueBox() {
@@ -15,6 +16,10 @@ export default function DialogueBox() {
 
   const fullText = currentDialogue?.text || '';
   const options = currentDialogue?.options || [];
+
+  // TV / remote: arrow keys move focus through the reply options.
+  const dialogueRef = useRef<HTMLDivElement>(null);
+  useDpadNavigation(activeOverlay === 'dialogue' && !isTyping && options.length > 0, dialogueRef);
 
   // Sync sound settings
   useEffect(() => {
@@ -114,7 +119,10 @@ export default function DialogueBox() {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 font-pixel select-none animate-in fade-in duration-200">
+    <div
+      ref={dialogueRef}
+      className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 font-pixel select-none animate-in fade-in duration-200"
+    >
       <div
         onClick={handleAdvance}
         className="relative w-full max-w-3xl cursor-pointer bg-white text-slate-900 border-4 border-black p-4 md:p-5 shadow-pixel-lg"

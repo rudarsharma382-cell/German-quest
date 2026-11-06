@@ -46,6 +46,20 @@ body {
   box-shadow: 1px 1px 0px 0px #000000;
 }
 
+/* Visible focus ring for keyboard / TV-remote navigation */
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 4px solid #fbbf24;
+  outline-offset: 2px;
+}
+
+/* Keep the game canvas from scrolling / zooming underneath touch controls */
+#phaser-game-container {
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
 /* 3D flip cards for the Café memory game */
 .pixel-flip-inner {
   position: relative;

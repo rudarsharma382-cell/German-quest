@@ -1,13 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useGameStore, InventoryItem } from '@/store/useGameStore';
 import { X, Sparkles, Package, Utensils, BookOpen, Coffee, Map, Croissant, Apple, Ticket } from 'lucide-react';
 import PixelButton from '@/components/ui/PixelButton';
+import { useDpadNavigation } from '@/hooks/useDpadNavigation';
 import { soundFx } from '@/utils/audio';
 
 export default function Inventory() {
   const { activeOverlay, setOverlay, inventory, useItem, xp, level } = useGameStore();
+
+  const inventoryRef = useRef<HTMLDivElement>(null);
+  useDpadNavigation(activeOverlay === 'inventory', inventoryRef);
 
   if (activeOverlay !== 'inventory') return null;
 
@@ -54,7 +58,10 @@ export default function Inventory() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 font-pixel select-none backdrop-blur-sm animate-in fade-in duration-150">
+    <div
+      ref={inventoryRef}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 font-pixel select-none backdrop-blur-sm animate-in fade-in duration-150"
+    >
       <div className="relative w-full max-w-2xl border-4 border-black bg-slate-900 p-6 shadow-pixel-lg text-white">
         {/* Top Header */}
         <div className="flex items-center justify-between border-b-4 border-black bg-amber-400 text-black px-4 py-2.5 -mx-6 -mt-6 mb-6">

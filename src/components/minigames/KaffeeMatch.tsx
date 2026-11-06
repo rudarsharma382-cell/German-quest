@@ -350,7 +350,7 @@ export default function KaffeeMatch() {
       )}
 
       <div className="mt-4 border-t-2 border-slate-700 pt-2 text-center text-[8px] text-slate-500">
-        [ESC] Schließen · Tippe zwei Karten an, um ein Paar zu finden
+        [↑↓←→] Karte wählen · [ENTER] Aufdecken · [ESC] Schließen
       </div>
     </MinigameFrame>
   );

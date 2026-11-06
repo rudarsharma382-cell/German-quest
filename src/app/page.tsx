@@ -9,6 +9,7 @@ import Satzbauer from '@/components/minigames/Satzbauer';
 import BuergerQuiz from '@/components/minigames/BuergerQuiz';
 import KaffeeMatch from '@/components/minigames/KaffeeMatch';
 import Inventory from '@/components/ui/Inventory';
+import TouchControls from '@/components/game/TouchControls';
 
 // Dynamically load Game component with SSR disabled to guarantee Phaser only mounts on client
 const Game = dynamic(() => import('@/components/game/Game'), {
@@ -31,6 +32,9 @@ export default function Home() {
 
       {/* 2. React HUD Layer */}
       <HUD />
+
+      {/* 2b. Optional touch joystick + action buttons (auto-on for touch devices) */}
+      <TouchControls />
 
       {/* 3. React Dialogue Box Layer */}
       <DialogueBox />

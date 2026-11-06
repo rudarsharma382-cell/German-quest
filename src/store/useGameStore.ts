@@ -64,12 +64,17 @@ export interface GameState {
 
   // Settings
   soundEnabled: boolean;
+  virtualControlsEnabled: boolean;
 
   // UI & Overlay State
   activeOverlay: UIOverlayType;
   currentDialogue: DialoguePayload | null;
   interactionPrompt: string | null;
   currentZone: string;
+
+  // On-screen input bridge (touch joystick / action buttons)
+  virtualInput: { x: number; y: number };
+  interactionRequest: number;
 
   // Actions
   addXP: (amount: number) => void;
@@ -80,6 +85,9 @@ export interface GameState {
   setInteractionPrompt: (prompt: string | null) => void;
   setCurrentZone: (zone: string) => void;
   toggleSound: () => void;
+  setVirtualControlsEnabled: (enabled: boolean) => void;
+  setVirtualInput: (x: number, y: number) => void;
+  requestInteraction: () => void;
   useItem: (itemId: string) => void;
   addItem: (item: InventoryItem) => void;
   updateQuestProgress: (questId: string, amount: number) => void;
@@ -94,11 +102,15 @@ export const useGameStore = create<GameState>((set) => ({
   inventory: defaultItems as InventoryItem[],
   quests: defaultQuests as Quest[],
   soundEnabled: true,
+  virtualControlsEnabled: false,
 
   activeOverlay: 'none',
   currentDialogue: null,
   interactionPrompt: null,
   currentZone: 'Marktplatz',
+
+  virtualInput: { x: 0, y: 0 },
+  interactionRequest: 0,
 
   addXP: (amount) =>
     set((state) => {
@@ -119,12 +131,15 @@ export const useGameStore = create<GameState>((set) => ({
     set(() => ({
       activeOverlay: overlay,
       currentDialogue: overlay === 'none' ? null : undefined,
+      // Stop any touch-stick drift as soon as an overlay takes over.
+      ...(overlay !== 'none' ? { virtualInput: { x: 0, y: 0 } } : {}),
     })),
 
   openDialogue: (dialogue) =>
     set(() => ({
       activeOverlay: 'dialogue',
       currentDialogue: dialogue,
+      virtualInput: { x: 0, y: 0 },
     })),
 
   closeDialogue: () =>
@@ -146,6 +161,28 @@ export const useGameStore = create<GameState>((set) => ({
   toggleSound: () =>
     set((state) => ({
       soundEnabled: !state.soundEnabled,
+    })),
+
+  setVirtualControlsEnabled: (enabled) => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem('gq-virtual-controls', enabled ? 'on' : 'off');
+      } catch {
+        // Storage can be unavailable (private mode); the toggle still works for the session.
+      }
+    }
+    set({ virtualControlsEnabled: enabled, virtualInput: { x: 0, y: 0 } });
+  },
+
+  setVirtualInput: (x, y) =>
+    set((state) => {
+      if (state.virtualInput.x === x && state.virtualInput.y === y) return state;
+      return { virtualInput: { x, y } };
+    }),
+
+  requestInteraction: () =>
+    set((state) => ({
+      interactionRequest: state.interactionRequest + 1,
     })),
 
   useItem: (itemId) =>
@@ -231,5 +268,7 @@ export const useGameStore = create<GameState>((set) => ({
       currentDialogue: null,
       interactionPrompt: null,
       currentZone: 'Marktplatz',
+      virtualInput: { x: 0, y: 0 },
+      interactionRequest: 0,
     })),
 }));

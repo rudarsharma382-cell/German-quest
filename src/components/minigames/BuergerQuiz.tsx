@@ -178,8 +178,13 @@ export default function BuergerQuiz() {
         setOverlay('none');
         return;
       }
+      // A focused button already receives native Enter/Space activation.
+      const onFocusedButton = Boolean(
+        (e.target as HTMLElement | null)?.closest('button:not([disabled])')
+      );
+
       if (!started) {
-        if (e.code === 'Enter' || e.code === 'Space') {
+        if ((e.code === 'Enter' || e.code === 'Space') && !onFocusedButton) {
           e.preventDefault();
           setStarted(true);
         }
@@ -193,7 +198,7 @@ export default function BuergerQuiz() {
           e.preventDefault();
           handleAnswer(num - 1);
         }
-      } else if (e.code === 'Enter' || e.code === 'Space') {
+      } else if ((e.code === 'Enter' || e.code === 'Space') && !onFocusedButton) {
         e.preventDefault();
         handleNext();
       }
@@ -408,7 +413,7 @@ export default function BuergerQuiz() {
       )}
 
       <div className="mt-4 border-t-2 border-slate-700 pt-2 text-center text-[8px] text-slate-500">
-        [1–3] Antwort wählen · [ENTER/SPACE] Weiter · [ESC] Schließen
+        [1–3] oder [↑↓←→ + ENTER] Antwort · [ENTER/SPACE] Weiter · [ESC] Schließen
       </div>
     </MinigameFrame>
   );

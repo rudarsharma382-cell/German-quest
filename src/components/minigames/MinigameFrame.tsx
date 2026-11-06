@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { ArrowRight, X } from 'lucide-react';
 import PixelButton from '@/components/ui/PixelButton';
+import { useDpadNavigation } from '@/hooks/useDpadNavigation';
 
 interface MinigameFrameProps {
   title: string;
@@ -12,9 +13,15 @@ interface MinigameFrameProps {
 }
 
 export function MinigameFrame({ title, icon, onClose, children }: MinigameFrameProps) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  useDpadNavigation(true, frameRef);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 font-pixel select-none backdrop-blur-sm">
-      <div className="relative max-h-[94vh] w-full max-w-2xl overflow-y-auto border-4 border-black bg-slate-900 text-white shadow-pixel-lg">
+      <div
+        ref={frameRef}
+        className="relative max-h-[94vh] w-full max-w-2xl overflow-y-auto border-4 border-black bg-slate-900 text-white shadow-pixel-lg"
+      >
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between border-b-4 border-black bg-amber-400 px-4 py-2.5 text-black">
           <div className="flex items-center gap-2">

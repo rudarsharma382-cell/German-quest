@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '@/store/useGameStore';
 import vocabularyData from '@/data/vocabulary.json';
 import PixelButton from '@/components/ui/PixelButton';
+import { useDpadNavigation } from '@/hooks/useDpadNavigation';
 import { Zap, Heart, Sparkles, Award, ArrowRight, RotateCcw, X } from 'lucide-react';
 
 interface VocabItem {
@@ -17,6 +18,9 @@ interface VocabItem {
 
 export default function WortBlitz() {
   const { activeOverlay, setOverlay, addXP, addCoins, updateQuestProgress } = useGameStore();
+
+  const frameRef = useRef<HTMLDivElement>(null);
+  useDpadNavigation(activeOverlay === 'minigame', frameRef);
 
   const [words, setWords] = useState<VocabItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -108,7 +112,10 @@ export default function WortBlitz() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 font-pixel select-none backdrop-blur-sm">
-      <div className="relative w-full max-w-xl border-4 border-black bg-slate-900 p-6 shadow-pixel-lg text-white">
+      <div
+        ref={frameRef}
+        className="relative w-full max-w-xl border-4 border-black bg-slate-900 p-6 shadow-pixel-lg text-white"
+      >
         {/* Top Header */}
         <div className="flex items-center justify-between border-b-4 border-black bg-amber-400 text-black px-4 py-2 -mx-6 -mt-6 mb-6">
           <div className="flex items-center gap-2">

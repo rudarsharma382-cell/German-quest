@@ -23,8 +23,8 @@
 │  ├─────────────────────────┤  ├─────────────────────────────────────┤  │
 │  │ Inventory (Rucksack [I])│  │ Wort-Blitz (Der/Die/Das)            │  │
 │  │                         │  │ Satz-Bauer (Bibliothek)             │  │
-│  │                         │  │ Bürger-Quiz (Rathaus)               │  │
-│  │                         │  │ Speisekarten-Match (Café)           │  │
+│  │ TouchControls           │  │ Bürger-Quiz (Rathaus)               │  │
+│  │ (joystick + A/B, auto)  │  │ Speisekarten-Match (Café)           │  │
 │  │                         │  │ Fahrkarten-Schalter (Bahnhof)       │  │
 │  └─────────────────────────┘  └─────────────────────────────────────┘  │
 └───────────────────────────────────▲────────────────────────────────────┘
@@ -83,10 +83,22 @@
 
 ## 5. Controls & Shortcuts
 * **`WASD` / `Arrow Keys`:** Move character (8-directional with normalized diagonals).
-* **`SPACE` / `E`:** Interact with Lukas, Herr Braun, or enter town buildings (including the Bahnhof).
+* **`SPACE` / `E` / `ENTER`:** Interact with Lukas, Herr Braun, or enter town buildings (including the Bahnhof). `ENTER` is the OK button on TV remotes.
 * **`I`:** Toggle Rucksack / Inventory overlay.
+* **`G`:** Show/hide the optional on-screen gamepad.
 * **`1`, `2`, `3`:** Quick-select dialogue response options (also selects answers in the Bürger-Quiz and replies in the Fahrkarten-Schalter).
 * **`ENTER` / `SPACE`:** Check the current sentence in the Satz-Bauer / continue to the next question in the Bahnhof and Bürger-Quiz.
 * **`ESC`:** Close the active minigame overlay.
 * **Mouse / tap:** Select word tiles (Satz-Bauer), quiz answers (Bürger-Quiz) and flip cards (Speisekarten-Match).
+
+### Touch (Android / tablets)
+* `src/components/game/TouchControls.tsx` renders a **virtual joystick** (bottom-left) and action buttons (bottom-right): **A – Aktion** (interact; lights up when something is in range) and **Rucksack**.
+* Automatically enabled on coarse-pointer devices, and remembered in `localStorage` (`gq-virtual-controls`). Toggle any time with the gamepad button in the HUD or `G`.
+* The joystick feeds `virtualInput` in the Zustand store; `MainScene` combines it with keyboard input and clamps the vector to walking speed. `requestInteraction` increments an `interactionRequest` counter the scene consumes each frame (so a double-tap cannot reopen an overlay after closing it).
+* Prompts switch from `[SPACE]` to `[A]` while the touch gamepad is active.
+
+### TV / remote (D-pad + OK)
+* Arrow keys move the hero and **navigate focus** inside dialogues and every minigame; `ENTER`/OK activates the focused button.
+* `src/hooks/useDpadNavigation.ts` provides spatial focus navigation (`useDpadNavigation(active, containerRef)`) and triggers focused buttons itself because Phaser captures Enter/Space globally. A visible amber focus ring is defined in `globals.css`.
+* Used by `MinigameFrame`, `FahrkartenSchalter`, `WortBlitz`, `DialogueBox` and `Inventory`.
 * **Audio Button (HUD):** Toggle retro sound effects.

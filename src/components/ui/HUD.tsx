@@ -2,7 +2,17 @@
 
 import React, { useEffect } from 'react';
 import { useGameStore } from '@/store/useGameStore';
-import { Coins, Sparkles, MapPin, Compass, Package, Volume2, VolumeX, Scroll } from 'lucide-react';
+import {
+  Coins,
+  Sparkles,
+  MapPin,
+  Compass,
+  Package,
+  Volume2,
+  VolumeX,
+  Scroll,
+  Gamepad2,
+} from 'lucide-react';
 import { soundFx } from '@/utils/audio';
 
 export default function HUD() {
@@ -18,6 +28,8 @@ export default function HUD() {
     quests,
     inventory,
     currentZone,
+    virtualControlsEnabled,
+    setVirtualControlsEnabled,
   } = useGameStore();
 
   const xpCurrent = xp % 100;
@@ -26,7 +38,7 @@ export default function HUD() {
   // Find first uncompleted quest
   const activeQuest = quests.find((q) => !q.completed) || quests[quests.length - 1];
 
-  // Hotkey [I] for Inventory
+  // Hotkeys: [I] inventory, [G] toggle the on-screen gamepad
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'KeyI') {
@@ -37,12 +49,15 @@ export default function HUD() {
           soundFx.playClick();
           setOverlay('none');
         }
+      } else if (e.code === 'KeyG') {
+        soundFx.playClick();
+        setVirtualControlsEnabled(!virtualControlsEnabled);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeOverlay, setOverlay]);
+  }, [activeOverlay, setOverlay, virtualControlsEnabled, setVirtualControlsEnabled]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-40 flex flex-col justify-between p-4 font-pixel select-none">
@@ -106,6 +121,26 @@ export default function HUD() {
               </span>
             </button>
 
+            {/* Virtual Gamepad Toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                soundFx.playClick();
+                setVirtualControlsEnabled(!virtualControlsEnabled);
+              }}
+              className="pointer-events-auto bg-slate-900 hover:bg-slate-800 border-4 border-black p-2 shadow-pixel text-slate-300 active:translate-y-0.5"
+              title={
+                virtualControlsEnabled
+                  ? 'Touch-Steuerung ausblenden [G]'
+                  : 'Touch-Steuerung einblenden [G]'
+              }
+              aria-pressed={virtualControlsEnabled}
+            >
+              <Gamepad2
+                className={`w-4 h-4 ${virtualControlsEnabled ? 'text-emerald-400' : 'text-slate-400'}`}
+              />
+            </button>
+
             {/* Audio Toggle */}
             <button
               type="button"
@@ -165,16 +200,18 @@ export default function HUD() {
         </div>
       )}
 
-      {/* Bottom Corner Control Hint */}
-      <div className="flex justify-between items-end">
-        <div className="bg-slate-900/90 border-4 border-black text-[10px] text-slate-300 px-3 py-1.5 shadow-pixel flex items-center gap-3">
-          <div>
-            <span className="text-amber-400 font-bold">[WASD / ⬆️⬇️⬅️➡️]</span> Bewegen &bull;{' '}
-            <span className="text-amber-400 font-bold">[SPACE]</span> Interagieren &bull;{' '}
-            <span className="text-amber-400 font-bold">[I]</span> Rucksack
+      {/* Bottom Corner Control Hint (hidden while the touch gamepad is visible) */}
+      {!virtualControlsEnabled && (
+        <div className="flex justify-between items-end">
+          <div className="bg-slate-900/90 border-4 border-black text-[10px] text-slate-300 px-3 py-1.5 shadow-pixel flex items-center gap-3">
+            <div>
+              <span className="text-amber-400 font-bold">[WASD / ⬆️⬇️⬅️➡️]</span> Bewegen &bull;{' '}
+              <span className="text-amber-400 font-bold">[SPACE / ENTER]</span> Interagieren &bull;{' '}
+              <span className="text-amber-400 font-bold">[I]</span> Rucksack
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
