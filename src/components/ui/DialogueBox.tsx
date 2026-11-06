@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useGameStore, DialoguePayload } from '@/store/useGameStore';
+import { useGameStore, DialoguePayload, UIOverlayType } from '@/store/useGameStore';
 import { MessageSquare, ArrowRight, CornerDownLeft } from 'lucide-react';
 import { soundFx } from '@/utils/audio';
 import dialogueTree from '@/data/dialogue.json';
 
 export default function DialogueBox() {
-  const { activeOverlay, currentDialogue, openDialogue, closeDialogue, soundEnabled } = useGameStore();
+  const { activeOverlay, currentDialogue, openDialogue, closeDialogue, setOverlay, soundEnabled } = useGameStore();
 
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -63,10 +63,19 @@ export default function DialogueBox() {
     }
   };
 
-  const handleSelectOption = (nextId?: string, action?: () => void) => {
+  const handleSelectOption = (
+    nextId?: string,
+    action?: () => void,
+    nextOverlay?: UIOverlayType
+  ) => {
     soundFx.playClick();
     if (action) {
       action();
+    }
+    // An option can hand control to a React overlay (e.g. the Bahnhof minigame).
+    if (nextOverlay && nextOverlay !== 'none') {
+      setOverlay(nextOverlay);
+      return;
     }
     if (nextId && (dialogueTree as Record<string, DialoguePayload>)[nextId]) {
       const nextNode = (dialogueTree as Record<string, DialoguePayload>)[nextId];
@@ -91,7 +100,7 @@ export default function DialogueBox() {
         if (!isNaN(num) && num >= 1 && num <= options.length) {
           e.preventDefault();
           const opt = options[num - 1];
-          handleSelectOption(opt.nextDialogueId, opt.action);
+          handleSelectOption(opt.nextDialogueId, opt.action, opt.nextOverlay);
         }
       }
     };
@@ -170,7 +179,7 @@ export default function DialogueBox() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectOption(opt.nextDialogueId, opt.action);
+                      handleSelectOption(opt.nextDialogueId, opt.action, opt.nextOverlay);
                     }}
                     className="w-full text-left bg-slate-100 hover:bg-amber-100 border-2 border-black p-2 text-xs font-bold text-slate-900 flex items-center justify-between group shadow-pixel-sm transition-all active:translate-x-0.5 active:translate-y-0.5"
                   >
@@ -192,7 +201,7 @@ export default function DialogueBox() {
         <div className="mt-3 flex items-center justify-between border-t-2 border-slate-200 pt-2 text-[10px] text-slate-500">
           <span className="text-slate-400">
             {isTyping
-              ? 'Lukas spricht...'
+              ? `${currentDialogue.speaker.split(' (')[0]} spricht...`
               : options.length > 0
               ? 'Wähle eine Option mit [1-3] oder Klick'
               : '[SPACE / KLICK] Weiter'}

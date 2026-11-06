@@ -18,6 +18,46 @@
     "completed": false,
     "xpReward": 50,
     "coinReward": 25
+  },
+  {
+    "id": "bahnhof_quest",
+    "title": "Die Reise beginnt",
+    "description": "Beantworte am Fahrkarten-Schalter im Bahnhof mindestens 4 Fragen richtig.",
+    "target": 1,
+    "current": 0,
+    "completed": false,
+    "xpReward": 40,
+    "coinReward": 20
+  },
+  {
+    "id": "bibliothek_quest",
+    "title": "Der Satz-Bauer",
+    "description": "Löse in der Bibliothek mindestens 4 von 6 Sätzen.",
+    "target": 1,
+    "current": 0,
+    "completed": false,
+    "xpReward": 40,
+    "coinReward": 20
+  },
+  {
+    "id": "rathaus_quest",
+    "title": "Die Bürgerprüfung",
+    "description": "Beantworte im Rathaus mindestens 6 von 8 Fragen richtig.",
+    "target": 1,
+    "current": 0,
+    "completed": false,
+    "xpReward": 50,
+    "coinReward": 25
+  },
+  {
+    "id": "cafe_quest",
+    "title": "Der perfekte Kaffee",
+    "description": "Finde im Café alle 6 Paare im Speisekarten-Match.",
+    "target": 1,
+    "current": 0,
+    "completed": false,
+    "xpReward": 35,
+    "coinReward": 15
   }
 ]
 

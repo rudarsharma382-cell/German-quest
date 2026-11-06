@@ -4,6 +4,10 @@ import dynamic from 'next/dynamic';
 import HUD from '@/components/ui/HUD';
 import DialogueBox from '@/components/ui/DialogueBox';
 import WortBlitz from '@/components/minigames/WortBlitz';
+import FahrkartenSchalter from '@/components/minigames/FahrkartenSchalter';
+import Satzbauer from '@/components/minigames/Satzbauer';
+import BuergerQuiz from '@/components/minigames/BuergerQuiz';
+import KaffeeMatch from '@/components/minigames/KaffeeMatch';
 import Inventory from '@/components/ui/Inventory';
 
 // Dynamically load Game component with SSR disabled to guarantee Phaser only mounts on client
@@ -33,6 +37,14 @@ export default function Home() {
 
       {/* 4. React Minigame Overlay Layer */}
       <WortBlitz />
+
+      {/* 4b. Bahnhof Ticket-Counter Overlay */}
+      <FahrkartenSchalter />
+
+      {/* 4c. Institution Minigames */}
+      <Satzbauer />
+      <BuergerQuiz />
+      <KaffeeMatch />
 
       {/* 5. React Inventory Overlay Layer */}
       <Inventory />

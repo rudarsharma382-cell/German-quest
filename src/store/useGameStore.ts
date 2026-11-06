@@ -2,13 +2,22 @@ import { create } from 'zustand';
 import defaultQuests from '@/data/quests.json';
 import defaultItems from '@/data/items.json';
 
-export type UIOverlayType = 'none' | 'dialogue' | 'minigame' | 'inventory';
+export type UIOverlayType =
+  | 'none'
+  | 'dialogue'
+  | 'minigame'
+  | 'inventory'
+  | 'bahnhof'
+  | 'satzbauer'
+  | 'buergerquiz'
+  | 'kaffee';
 
 export interface DialogueOption {
   id: string;
   label: string;
   translation?: string;
   nextDialogueId?: string;
+  nextOverlay?: UIOverlayType;
   action?: () => void;
 }
 
@@ -60,6 +69,7 @@ export interface GameState {
   activeOverlay: UIOverlayType;
   currentDialogue: DialoguePayload | null;
   interactionPrompt: string | null;
+  currentZone: string;
 
   // Actions
   addXP: (amount: number) => void;
@@ -68,6 +78,7 @@ export interface GameState {
   openDialogue: (dialogue: DialoguePayload) => void;
   closeDialogue: () => void;
   setInteractionPrompt: (prompt: string | null) => void;
+  setCurrentZone: (zone: string) => void;
   toggleSound: () => void;
   useItem: (itemId: string) => void;
   addItem: (item: InventoryItem) => void;
@@ -87,6 +98,7 @@ export const useGameStore = create<GameState>((set) => ({
   activeOverlay: 'none',
   currentDialogue: null,
   interactionPrompt: null,
+  currentZone: 'Marktplatz',
 
   addXP: (amount) =>
     set((state) => {
@@ -124,6 +136,11 @@ export const useGameStore = create<GameState>((set) => ({
   setInteractionPrompt: (prompt) =>
     set(() => ({
       interactionPrompt: prompt,
+    })),
+
+  setCurrentZone: (zone) =>
+    set(() => ({
+      currentZone: zone,
     })),
 
   toggleSound: () =>
@@ -213,5 +230,6 @@ export const useGameStore = create<GameState>((set) => ({
       activeOverlay: 'none',
       currentDialogue: null,
       interactionPrompt: null,
+      currentZone: 'Marktplatz',
     })),
 }));

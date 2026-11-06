@@ -1,0 +1,76 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "category": "Geografie",
+      "question": "Wie viele Bundesländer hat Deutschland?",
+      "english": "How many federal states does Germany have?",
+      "options": ["14", "16", "18"],
+      "correct": 1,
+      "fact": "Seit der Wiedervereinigung 1990 hat Deutschland 16 Bundesländer. 'das Bundesland' = federal state."
+    },
+    {
+      "id": 2,
+      "category": "Geografie",
+      "question": "Was ist die Hauptstadt von Bayern?",
+      "english": "What is the capital of Bavaria?",
+      "options": ["Berlin", "München", "Hamburg"],
+      "correct": 1,
+      "fact": "München ist die Hauptstadt Bayerns – und die Stadt des Oktoberfests. 'die Hauptstadt' = capital city."
+    },
+    {
+      "id": 3,
+      "category": "Geografie",
+      "question": "Welcher Fluss fließt durch Köln?",
+      "english": "Which river flows through Cologne?",
+      "options": ["Elbe", "Donau", "Rhein"],
+      "correct": 2,
+      "fact": "Der Rhein fließt durch Köln. 'der Fluss' = river; 'fließen' = to flow."
+    },
+    {
+      "id": 4,
+      "category": "Geschichte",
+      "question": "In welchem Jahr fiel die Berliner Mauer?",
+      "english": "In which year did the Berlin Wall fall?",
+      "options": ["1961", "1989", "1991"],
+      "correct": 1,
+      "fact": "Am 9. November 1989 fiel die Berliner Mauer. Sie wurde 1961 gebaut. 'die Mauer' = wall."
+    },
+    {
+      "id": 5,
+      "category": "Geschichte",
+      "question": "Wer war der erste Bundeskanzler der Bundesrepublik Deutschland?",
+      "english": "Who was the first chancellor of the Federal Republic of Germany?",
+      "options": ["Willy Brandt", "Konrad Adenauer", "Helmut Kohl"],
+      "correct": 1,
+      "fact": "Konrad Adenauer war von 1949 bis 1963 der erste Bundeskanzler. 'der Bundeskanzler' = chancellor."
+    },
+    {
+      "id": 6,
+      "category": "Kultur",
+      "question": "In welcher Stadt findet das Oktoberfest statt?",
+      "english": "In which city does the Oktoberfest take place?",
+      "options": ["Köln", "München", "Frankfurt"],
+      "correct": 1,
+      "fact": "Das Oktoberfest findet jedes Jahr in München statt. Der bayerische Ruf lautet: 'O'zapft is!'"
+    },
+    {
+      "id": 7,
+      "category": "Sprache",
+      "question": "Was bedeutet das Wort „Fremdsprache“?",
+      "english": "What does the word 'Fremdsprache' mean?",
+      "options": ["Mother tongue", "Foreign language", "Sign language"],
+      "correct": 1,
+      "fact": "'die Fremdsprache' = foreign language. 'die Muttersprache' = mother tongue. 'die Gebärdensprache' = sign language."
+    },
+    {
+      "id": 8,
+      "category": "Kultur",
+      "question": "Welche Farben hat die deutsche Flagge?",
+      "english": "What colors does the German flag have?",
+      "options": ["Schwarz-Rot-Gold", "Blau-Weiß-Rot", "Grün-Weiß-Rot"],
+      "correct": 0,
+      "fact": "Die deutsche Flagge ist schwarz-rot-gold, von oben nach unten. 'die Flagge' = flag."
+    }
+  ]
+}

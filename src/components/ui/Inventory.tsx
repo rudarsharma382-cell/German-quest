@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useGameStore, InventoryItem } from '@/store/useGameStore';
-import { X, Sparkles, Package, Utensils, BookOpen, Coffee, Map, Croissant, Apple } from 'lucide-react';
+import { X, Sparkles, Package, Utensils, BookOpen, Coffee, Map, Croissant, Apple, Ticket } from 'lucide-react';
 import PixelButton from '@/components/ui/PixelButton';
 import { soundFx } from '@/utils/audio';
 
@@ -33,6 +33,8 @@ export default function Inventory() {
         return <Map className="w-8 h-8 text-emerald-600" />;
       case 'Apple':
         return <Apple className="w-8 h-8 text-rose-500" />;
+      case 'Ticket':
+        return <Ticket className="w-8 h-8 text-amber-400" />;
       default:
         return <Package className="w-8 h-8 text-slate-400" />;
     }

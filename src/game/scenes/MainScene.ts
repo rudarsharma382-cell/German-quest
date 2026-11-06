@@ -12,9 +12,22 @@ export class MainScene extends Phaser.Scene {
   private libraryBuilding!: Phaser.Physics.Arcade.Image;
   private townHallBuilding!: Phaser.Physics.Arcade.Image;
   private cafeBuilding!: Phaser.Physics.Arcade.Image;
+  private bahnhofBuilding!: Phaser.Physics.Arcade.Image;
+
+  // Bahnhof dressing & NPC
+  private train!: Phaser.Physics.Arcade.Image;
+  private stationMaster!: Phaser.Physics.Arcade.Sprite;
 
   // Interaction Proximities
-  private activeNearbyTarget: 'lukas' | 'bakery' | 'library' | 'townhall' | 'cafe' | null = null;
+  private activeNearbyTarget:
+    | 'lukas'
+    | 'bakery'
+    | 'library'
+    | 'townhall'
+    | 'cafe'
+    | 'bahnhof'
+    | 'braun'
+    | null = null;
 
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasdKeys!: {
@@ -29,6 +42,7 @@ export class MainScene extends Phaser.Scene {
   private exclamationBadge!: Phaser.GameObjects.Container;
   private badgeTween!: Phaser.Tweens.Tween;
   private hasSpokenFirstTime = false;
+  private hasSpokenToBraun = false;
 
   constructor() {
     super({ key: 'MainScene' });
@@ -145,6 +159,22 @@ export class MainScene extends Phaser.Scene {
       padding: { x: 4, y: 2 },
     }).setOrigin(0.5);
 
+    // E. BAHNHOF (Main Station - Southwest)
+    const bahnhofX = 470;
+    const bahnhofY = 750;
+    this.bahnhofBuilding = this.physics.add.staticImage(bahnhofX, bahnhofY, 'bahnhof_building');
+    this.bahnhofBuilding.setSize(150, 96);
+    this.add.text(bahnhofX, bahnhofY - 24, 'BAHNHOF', {
+      fontFamily: 'monospace',
+      fontSize: '11px',
+      color: '#fde047',
+      backgroundColor: '#0f172a',
+      padding: { x: 6, y: 2 },
+    }).setOrigin(0.5);
+
+    // Platform, rails, train and station master
+    this.createBahnhofArea();
+
     // 4. Create Player
     const startX = 704;
     const startY = 620;
@@ -160,6 +190,9 @@ export class MainScene extends Phaser.Scene {
     if (this.libraryBuilding) this.physics.add.collider(this.player, this.libraryBuilding);
     if (this.townHallBuilding) this.physics.add.collider(this.player, this.townHallBuilding);
     if (this.cafeBuilding) this.physics.add.collider(this.player, this.cafeBuilding);
+    if (this.bahnhofBuilding) this.physics.add.collider(this.player, this.bahnhofBuilding);
+    if (this.train) this.physics.add.collider(this.player, this.train);
+    if (this.stationMaster) this.physics.add.collider(this.player, this.stationMaster);
 
     // 6. Camera setup
     this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
@@ -198,8 +231,27 @@ export class MainScene extends Phaser.Scene {
     const distLibrary = Phaser.Math.Distance.Between(pX, pY, 908, 395); // library door
     const distTownHall = Phaser.Math.Distance.Between(pX, pY, 704, 250); // town hall door
     const distCafe = Phaser.Math.Distance.Between(pX, pY, 908, 735); // cafe door
+    const distBahnhof = Phaser.Math.Distance.Between(pX, pY, 470, 852); // station door
+    const distBraun = Phaser.Math.Distance.Between(pX, pY, 600, 850); // station master
 
-    let currentTarget: 'lukas' | 'bakery' | 'library' | 'townhall' | 'cafe' | null = null;
+    // Zone label for the HUD
+    let zone = 'Marktplatz';
+    if (distBahnhof <= 250 || distBraun <= 250) zone = 'Bahnhof';
+    else if (distCafe <= 210) zone = 'Café Gemütlichkeit';
+    else if (distBakery <= 200) zone = 'Bäckerei';
+    else if (distLibrary <= 200) zone = 'Bibliothek';
+    else if (distTownHall <= 200) zone = 'Rathaus';
+    if (store.currentZone !== zone) store.setCurrentZone(zone);
+
+    let currentTarget:
+      | 'lukas'
+      | 'bakery'
+      | 'library'
+      | 'townhall'
+      | 'cafe'
+      | 'bahnhof'
+      | 'braun'
+      | null = null;
 
     if (distLukas <= 68) {
       currentTarget = 'lukas';
@@ -209,13 +261,19 @@ export class MainScene extends Phaser.Scene {
       store.setInteractionPrompt('[SPACE] Bäckerei betreten (Wort-Blitz)');
     } else if (distLibrary <= 55) {
       currentTarget = 'library';
-      store.setInteractionPrompt('[SPACE] Bibliothek betreten (Vokabel-Archiv)');
+      store.setInteractionPrompt('[SPACE] Bibliothek betreten (Satz-Bauer)');
     } else if (distTownHall <= 60) {
       currentTarget = 'townhall';
-      store.setInteractionPrompt('[SPACE] Rathaus betreten (Bürgermeister)');
+      store.setInteractionPrompt('[SPACE] Rathaus betreten (Bürger-Quiz)');
     } else if (distCafe <= 55) {
       currentTarget = 'cafe';
-      store.setInteractionPrompt('[SPACE] Café betreten (Kaffee & Kuchen)');
+      store.setInteractionPrompt('[SPACE] Café betreten (Speisekarten-Match)');
+    } else if (distBraun <= 60) {
+      currentTarget = 'braun';
+      store.setInteractionPrompt('[SPACE] Mit Herrn Braun sprechen');
+    } else if (distBahnhof <= 62) {
+      currentTarget = 'bahnhof';
+      store.setInteractionPrompt('[SPACE] Fahrkarten-Schalter öffnen');
     } else {
       if (this.activeNearbyTarget !== null) {
         store.setInteractionPrompt(null);
@@ -246,29 +304,25 @@ export class MainScene extends Phaser.Scene {
         // Trigger Wort-Blitz minigame overlay
         store.setOverlay('minigame');
       } else if (currentTarget === 'library') {
-        // Trigger Library dialogue
-        store.openDialogue({
-          speaker: 'Frau Weber (Bibliothekarin)',
-          text: 'Guten Tag! Willkommen in der Bibliothek von Deutschstadt. Wusstest du? Wörter mit den Endungen -ung, -heit, -keit und -schaft haben immer den Artikel DIE!',
-          translation: 'Good day! Welcome to the library of German City. Did you know? Words ending in -ung, -heit, -keit, and -schaft always take the article DIE!',
-        });
-        store.addXP(10);
+        // Sentence-building minigame with Frau Weber
+        store.setOverlay('satzbauer');
       } else if (currentTarget === 'townhall') {
-        // Trigger Town Hall dialogue
-        store.openDialogue({
-          speaker: 'Bürgermeister Schmidt',
-          text: 'Sei gegrüßt, Reisender! Deutschstadt heißt jeden Sprachlerner herzlich willkommen. Zeige dein Können in der Bäckerei und sammle Vokabeln im Rucksack [I]!',
-          translation: 'Greetings, traveler! German City warmly welcomes every language learner. Prove your skills at the bakery and gather vocabulary in your backpack [I]!',
-        });
-        store.addXP(10);
+        // German facts, geography & history quiz with the mayor
+        store.setOverlay('buergerquiz');
       } else if (currentTarget === 'cafe') {
-        // Trigger Café dialogue
-        store.openDialogue({
-          speaker: 'Herr Müller (Barista)',
-          text: 'Hallo! Lust auf einen frischen Kaffee oder eine Brezel? Schau in deinen Rucksack mit [I], um deine Vorräte zu genießen!',
-          translation: 'Hello! Fancy a fresh coffee or a pretzel? Check your backpack with [I] to enjoy your provisions!',
-        });
-        store.addXP(10);
+        // Café menu memory-match with Herr Müller
+        store.setOverlay('kaffee');
+      } else if (currentTarget === 'braun') {
+        // Station master dialogue (can hand off to the ticket-counter minigame)
+        store.openDialogue((dialogueTree as any).braun_intro);
+
+        if (!this.hasSpokenToBraun) {
+          this.hasSpokenToBraun = true;
+          store.addXP(10);
+        }
+      } else if (currentTarget === 'bahnhof') {
+        // Open the Fahrkarten-Schalter minigame overlay
+        store.setOverlay('bahnhof');
       }
       return;
     }
@@ -301,6 +355,83 @@ export class MainScene extends Phaser.Scene {
     } else if (vx > 0) {
       this.player.setFlipX(false);
     }
+  }
+
+  /**
+   * Bahnhof platform, rails, train and station master
+   */
+  private createBahnhofArea() {
+    const tileSize = 32;
+
+    // Platform tiles (tiles x 11..19, rows 28..29)
+    for (let x = 11; x <= 19; x++) {
+      for (let y = 28; y <= 29; y++) {
+        this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'platform_tile');
+      }
+    }
+
+    // Yellow safety line along the track edge
+    this.add.rectangle(496, 957, 9 * tileSize, 5, 0xfacc15);
+
+    // Rails (tiles x 4..27, rows 30..31)
+    for (let x = 4; x <= 27; x++) {
+      for (let y = 30; y <= 31; y++) {
+        this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'rail_tile');
+      }
+    }
+
+    // The train
+    this.train = this.physics.add.staticImage(600, 998, 'train_complete');
+    this.train.setSize(320, 44);
+
+    // Steam puffs rising from the chimney
+    for (let i = 0; i < 3; i++) {
+      const puff = this.add.circle(456, 966, 5, 0xf1f5f9, 0.75);
+      this.tweens.add({
+        targets: puff,
+        y: 905,
+        x: 438 + i * 16,
+        alpha: 0,
+        scale: 2.4,
+        duration: 2300,
+        delay: i * 750,
+        repeat: -1,
+      });
+    }
+
+    // Platform sign
+    this.add.text(496, 908, 'GLEIS 1', {
+      fontFamily: 'monospace',
+      fontSize: '9px',
+      color: '#facc15',
+      backgroundColor: '#0f172a',
+      padding: { x: 4, y: 2 },
+    }).setOrigin(0.5);
+
+    // Static departure board near the platform
+    this.add.text(590, 908, 'ABFAHRT 14:30\nHAMBURG · GLEIS 3', {
+      fontFamily: 'monospace',
+      fontSize: '8px',
+      color: '#fbbf24',
+      backgroundColor: '#000000',
+      padding: { x: 4, y: 3 },
+      lineSpacing: 2,
+    }).setOrigin(0.5);
+
+    // Station master NPC
+    const masterX = 600;
+    const masterY = 848;
+    this.stationMaster = this.physics.add.sprite(masterX, masterY, 'station_master');
+    this.stationMaster.setImmovable(true);
+    this.stationMaster.setSize(22, 28);
+
+    this.add.text(masterX, masterY - 30, 'Herr Braun', {
+      fontFamily: 'monospace',
+      fontSize: '10px',
+      color: '#ffffff',
+      backgroundColor: '#000000',
+      padding: { x: 4, y: 2 },
+    }).setOrigin(0.5);
   }
 
   /**
@@ -494,6 +625,186 @@ export class MainScene extends Phaser.Scene {
     cafeG.fillRect(46, 38, 18, 34);
     cafeG.generateTexture('cafe_building', 80, 72);
     cafeG.destroy();
+
+    // 10. Der Bahnhof (160x128)
+    const bahnhofG = this.make.graphics({ x: 0, y: 0 });
+    // Slate roof
+    bahnhofG.fillStyle(0x334155, 1);
+    bahnhofG.fillRect(0, 0, 160, 26);
+    bahnhofG.fillStyle(0x1e293b, 1);
+    bahnhofG.fillRect(0, 22, 160, 6);
+    // Clock tower
+    bahnhofG.fillStyle(0x475569, 1);
+    bahnhofG.fillRect(64, 0, 32, 30);
+    bahnhofG.fillStyle(0x0f172a, 1);
+    bahnhofG.fillRect(70, 2, 20, 18);
+    bahnhofG.fillStyle(0xfef08a, 1);
+    bahnhofG.fillRect(74, 5, 12, 12);
+    bahnhofG.fillStyle(0x0f172a, 1);
+    bahnhofG.fillRect(79, 7, 2, 5);
+    bahnhofG.fillRect(79, 11, 4, 2);
+    // Sandstone facade
+    bahnhofG.fillStyle(0xd7c6a3, 1);
+    bahnhofG.fillRect(6, 26, 148, 96);
+    bahnhofG.fillStyle(0xc4b08c, 1);
+    for (let row = 40; row < 120; row += 12) {
+      bahnhofG.fillRect(6, row, 148, 2);
+    }
+    // Sign band
+    bahnhofG.fillStyle(0x0f172a, 1);
+    bahnhofG.fillRect(24, 32, 112, 18);
+    // Arched windows
+    bahnhofG.fillStyle(0x1e293b, 1);
+    bahnhofG.fillRect(18, 60, 26, 34);
+    bahnhofG.fillRect(116, 60, 26, 34);
+    bahnhofG.fillStyle(0x38bdf8, 1);
+    bahnhofG.fillRect(22, 64, 18, 26);
+    bahnhofG.fillRect(120, 64, 18, 26);
+    bahnhofG.fillStyle(0x0ea5e9, 1);
+    bahnhofG.fillRect(30, 64, 2, 26);
+    bahnhofG.fillRect(128, 64, 2, 26);
+    // Grand arched entrance
+    bahnhofG.fillStyle(0x1e293b, 1);
+    bahnhofG.fillRect(62, 66, 36, 56);
+    bahnhofG.fillRect(66, 60, 28, 8);
+    bahnhofG.fillStyle(0x3b2314, 1);
+    bahnhofG.fillRect(66, 70, 28, 52);
+    bahnhofG.fillStyle(0x0f172a, 1);
+    bahnhofG.fillRect(79, 70, 2, 52);
+    bahnhofG.fillStyle(0xfacc15, 1);
+    bahnhofG.fillRect(72, 96, 3, 6);
+    bahnhofG.fillRect(85, 96, 3, 6);
+    // Entrance steps
+    bahnhofG.fillStyle(0x94a3b8, 1);
+    bahnhofG.fillRect(56, 118, 48, 10);
+    bahnhofG.fillStyle(0x64748b, 1);
+    bahnhofG.fillRect(50, 124, 60, 4);
+    bahnhofG.generateTexture('bahnhof_building', 160, 128);
+    bahnhofG.destroy();
+
+    // 11. Platform Tile (32x32)
+    const platformG = this.make.graphics({ x: 0, y: 0 });
+    platformG.fillStyle(0x9ca3af, 1);
+    platformG.fillRect(0, 0, 32, 32);
+    platformG.fillStyle(0xb6bcc6, 1);
+    platformG.fillRect(2, 4, 9, 2);
+    platformG.fillRect(18, 11, 9, 2);
+    platformG.fillRect(6, 21, 8, 2);
+    platformG.fillStyle(0x7c8391, 1);
+    platformG.fillRect(0, 31, 32, 1);
+    platformG.fillRect(15, 2, 1, 28);
+    platformG.generateTexture('platform_tile', 32, 32);
+    platformG.destroy();
+
+    // 12. Rail Tile (32x32)
+    const railG = this.make.graphics({ x: 0, y: 0 });
+    railG.fillStyle(0x4b5563, 1);
+    railG.fillRect(0, 0, 32, 32);
+    railG.fillStyle(0x374151, 1);
+    railG.fillRect(3, 4, 6, 4);
+    railG.fillRect(19, 15, 7, 4);
+    railG.fillRect(8, 26, 5, 3);
+    // Wooden sleepers
+    railG.fillStyle(0x5b3a1e, 1);
+    railG.fillRect(2, 0, 5, 32);
+    railG.fillRect(13, 0, 5, 32);
+    railG.fillRect(24, 0, 5, 32);
+    // Steel rails
+    railG.fillStyle(0x9ca3af, 1);
+    railG.fillRect(0, 8, 32, 4);
+    railG.fillRect(0, 20, 32, 4);
+    railG.fillStyle(0xe5e7eb, 1);
+    railG.fillRect(0, 8, 32, 1);
+    railG.fillRect(0, 20, 32, 1);
+    railG.fillStyle(0x4b5563, 1);
+    railG.fillRect(0, 11, 32, 1);
+    railG.fillRect(0, 23, 32, 1);
+    railG.generateTexture('rail_tile', 32, 32);
+    railG.destroy();
+
+    // 13. Steam Train (336x60)
+    const trainG = this.make.graphics({ x: 0, y: 0 });
+    // Chassis
+    trainG.fillStyle(0x111827, 1);
+    trainG.fillRect(0, 40, 336, 10);
+    // Engine boiler
+    trainG.fillStyle(0x1f2937, 1);
+    trainG.fillRect(0, 16, 70, 26);
+    trainG.fillStyle(0xb91c1c, 1);
+    trainG.fillRect(0, 10, 70, 10);
+    trainG.fillStyle(0x0f172a, 1);
+    trainG.fillRect(12, 0, 14, 14);
+    // Front lamp
+    trainG.fillStyle(0xfacc15, 1);
+    trainG.fillRect(4, 22, 6, 6);
+    trainG.fillStyle(0xfef08a, 1);
+    trainG.fillRect(5, 23, 4, 4);
+    // Cab
+    trainG.fillStyle(0x991b1b, 1);
+    trainG.fillRect(68, 0, 52, 42);
+    trainG.fillStyle(0x0f172a, 1);
+    trainG.fillRect(76, 6, 16, 14);
+    trainG.fillRect(96, 6, 16, 14);
+    trainG.fillStyle(0xa5f3fc, 1);
+    trainG.fillRect(79, 9, 10, 8);
+    trainG.fillRect(99, 9, 10, 8);
+    // Car 1
+    trainG.fillStyle(0x1d4ed8, 1);
+    trainG.fillRect(128, 12, 104, 30);
+    trainG.fillStyle(0x0f172a, 1);
+    trainG.fillRect(128, 38, 104, 6);
+    trainG.fillStyle(0x93c5fd, 1);
+    trainG.fillRect(136, 18, 16, 10);
+    trainG.fillRect(160, 18, 16, 10);
+    trainG.fillRect(208, 18, 16, 10);
+    trainG.fillStyle(0x1e3a8a, 1);
+    trainG.fillRect(184, 12, 8, 26);
+    // Car 2
+    trainG.fillStyle(0x15803d, 1);
+    trainG.fillRect(240, 12, 96, 30);
+    trainG.fillStyle(0x0f172a, 1);
+    trainG.fillRect(240, 38, 96, 6);
+    trainG.fillStyle(0x86efac, 1);
+    trainG.fillRect(248, 18, 16, 10);
+    trainG.fillRect(272, 18, 16, 10);
+    trainG.fillRect(304, 18, 16, 10);
+    // Wheels
+    const wheelXs = [20, 50, 80, 110, 150, 185, 220, 260, 295, 325];
+    wheelXs.forEach((wx) => {
+      trainG.fillStyle(0x0f172a, 1);
+      trainG.fillCircle(wx, 50, 7);
+      trainG.fillStyle(0x94a3b8, 1);
+      trainG.fillCircle(wx, 50, 2);
+    });
+    trainG.generateTexture('train_complete', 336, 60);
+    trainG.destroy();
+
+    // 14. Station Master (32x32)
+    const masterG = this.make.graphics({ x: 0, y: 0 });
+    masterG.fillStyle(0x0f172a, 1);
+    masterG.fillRect(7, 2, 18, 6);
+    masterG.fillRect(5, 7, 22, 3);
+    masterG.fillStyle(0xfacc15, 1);
+    masterG.fillRect(9, 6, 14, 1);
+    masterG.fillRect(19, 3, 3, 3);
+    masterG.fillStyle(0xf3c28a, 1);
+    masterG.fillRect(9, 10, 14, 8);
+    masterG.fillStyle(0x1e293b, 1);
+    masterG.fillRect(12, 13, 2, 2);
+    masterG.fillRect(19, 13, 2, 2);
+    masterG.fillStyle(0x5b3a1e, 1);
+    masterG.fillRect(11, 16, 10, 2);
+    masterG.fillStyle(0x1d4ed8, 1);
+    masterG.fillRect(8, 18, 16, 9);
+    masterG.fillStyle(0x0f172a, 1);
+    masterG.fillRect(8, 24, 16, 2);
+    masterG.fillStyle(0xfacc15, 1);
+    masterG.fillRect(15, 20, 2, 2);
+    masterG.fillStyle(0x334155, 1);
+    masterG.fillRect(9, 27, 5, 5);
+    masterG.fillRect(18, 27, 5, 5);
+    masterG.generateTexture('station_master', 32, 32);
+    masterG.destroy();
   }
 
   /**
@@ -511,8 +822,10 @@ export class MainScene extends Phaser.Scene {
         const isCentralPathX = Math.abs(x - centerTileX) <= 1;
         const isCentralPathY = Math.abs(y - centerTileY) <= 1;
         const isPlaza = Math.abs(x - centerTileX) <= 5 && Math.abs(y - centerTileY) <= 5;
+        // Cobblestone forecourt leading to the Bahnhof in the southwest
+        const isStationForecourt = x >= 10 && x <= 22 && y >= 26 && y <= 27;
 
-        if (isPlaza || isCentralPathX || isCentralPathY) {
+        if (isPlaza || isCentralPathX || isCentralPathY || isStationForecourt) {
           this.add.image(posX, posY, 'cobblestone');
         } else {
           const isDarkTile = (x + y) % 2 === 0;

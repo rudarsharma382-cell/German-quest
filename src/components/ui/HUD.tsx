@@ -17,6 +17,7 @@ export default function HUD() {
     toggleSound,
     quests,
     inventory,
+    currentZone,
   } = useGameStore();
 
   const xpCurrent = xp % 100;
@@ -127,7 +128,7 @@ export default function HUD() {
               <MapPin className="w-4 h-4 text-red-500 animate-bounce" />
               <div>
                 <div className="text-[11px] text-white">Deutschstadt</div>
-                <div className="text-[9px] text-slate-400">Marktplatz</div>
+                <div className="text-[9px] text-slate-400">{currentZone}</div>
               </div>
             </div>
           </div>

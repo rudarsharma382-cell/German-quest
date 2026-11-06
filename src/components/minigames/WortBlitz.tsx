@@ -16,7 +16,7 @@ interface VocabItem {
 }
 
 export default function WortBlitz() {
-  const { activeOverlay, setOverlay, addXP, addCoins } = useGameStore();
+  const { activeOverlay, setOverlay, addXP, addCoins, updateQuestProgress } = useGameStore();
 
   const [words, setWords] = useState<VocabItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -97,6 +97,7 @@ export default function WortBlitz() {
       const coinsEarned = Math.max(5, Math.floor(finalScore / 2));
       addXP(xpEarned);
       addCoins(coinsEarned);
+      updateQuestProgress('wort_blitz_quest', finalScore);
       setRewardsClaimed(true);
     }
   };

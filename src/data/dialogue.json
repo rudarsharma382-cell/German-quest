@@ -17,6 +17,11 @@
         "nextDialogueId": "lukas_about_city"
       },
       {
+        "id": "opt_activities",
+        "label": "Was kann ich hier tun? (What can I do here?)",
+        "nextDialogueId": "lukas_activities"
+      },
+      {
         "id": "opt_leave",
         "label": "Auf Wiedersehen! (Goodbye!)",
         "nextDialogueId": "lukas_goodbye"
@@ -56,12 +61,82 @@
       }
     ]
   },
+  "lukas_activities": {
+    "id": "lukas_activities",
+    "speaker": "Lukas (Stadtwache)",
+    "avatar": "/characters/Lukas.png",
+    "text": "In jeder Institution wartet ein Minispiel! Bäckerei: Wort-Blitz mit Artikeln. Bibliothek: Satz-Bauer. Rathaus: Bürger-Quiz über Deutschland. Café: Speisekarten-Match. Bahnhof: Fahrkarten-Schalter. Geh einfach hinein und drücke [SPACE]!",
+    "translation": "Every institution has a minigame waiting! Bakery: Word Blitz with articles. Library: Sentence Builder. Town Hall: Citizen Quiz about Germany. Café: Menu Match. Station: Ticket Counter. Just walk in and press [SPACE]!",
+    "options": [
+      {
+        "id": "opt_activities_go",
+        "label": "Perfekt, ich probiere alle aus! (Perfect, I'll try them all!)",
+        "nextDialogueId": "lukas_goodbye"
+      },
+      {
+        "id": "opt_activities_back",
+        "label": "Noch eine Frage. (One more question.)",
+        "nextDialogueId": "lukas_intro"
+      }
+    ]
+  },
   "lukas_goodbye": {
     "id": "lukas_goodbye",
     "speaker": "Lukas (Stadtwache)",
     "avatar": "/characters/Lukas.png",
     "text": "Viel Erfolg beim Lernen! Bis später! (Tschüss!)",
     "translation": "Good luck with your learning! See you later! (Bye!)",
+    "options": []
+  },
+  "braun_intro": {
+    "id": "braun_intro",
+    "speaker": "Herr Braun (Bahnhofsvorsteher)",
+    "avatar": "/characters/Braun.svg",
+    "text": "Willkommen am Hauptbahnhof von Deutschstadt! Züge fahren nach Berlin, Hamburg, Köln und München. Möchtest du eine Fahrkarte kaufen?",
+    "translation": "Welcome to the main station of German City! Trains depart to Berlin, Hamburg, Cologne and Munich. Would you like to buy a ticket?",
+    "options": [
+      {
+        "id": "braun_buy",
+        "label": "Ja, ich möchte eine Fahrkarte kaufen. (Yes, I'd like to buy a ticket.)",
+        "nextOverlay": "bahnhof"
+      },
+      {
+        "id": "braun_vocab",
+        "label": "Welche Wörter brauche ich am Bahnhof? (Which words do I need at the station?)",
+        "nextDialogueId": "braun_vocab"
+      },
+      {
+        "id": "braun_leave",
+        "label": "Nein danke, ich schaue mich nur um. (No thanks, just looking around.)",
+        "nextDialogueId": "braun_goodbye"
+      }
+    ]
+  },
+  "braun_vocab": {
+    "id": "braun_vocab",
+    "speaker": "Herr Braun (Bahnhofsvorsteher)",
+    "avatar": "/characters/Braun.svg",
+    "text": "Merke dir die wichtigsten Wörter: der Zug, das Gleis, die Fahrkarte, die Abfahrt und die Ankunft. „Wo ist Gleis 3?“ – „Gleis 3 ist dort drüben.“",
+    "translation": "Remember the most important words: the train, the platform/track, the ticket, the departure and the arrival. \"Where is platform 3?\" – \"Platform 3 is over there.\"",
+    "options": [
+      {
+        "id": "braun_vocab_buy",
+        "label": "Danke! Jetzt kaufe ich eine Fahrkarte. (Thanks! Now I'll buy a ticket.)",
+        "nextOverlay": "bahnhof"
+      },
+      {
+        "id": "braun_vocab_back",
+        "label": "Zurück zum Gespräch. (Back to the conversation.)",
+        "nextDialogueId": "braun_intro"
+      }
+    ]
+  },
+  "braun_goodbye": {
+    "id": "braun_goodbye",
+    "speaker": "Herr Braun (Bahnhofsvorsteher)",
+    "avatar": "/characters/Braun.svg",
+    "text": "Gute Reise! Und denk daran: Übung macht den Meister!",
+    "translation": "Have a good trip! And remember: practice makes perfect!",
     "options": []
   }
 }

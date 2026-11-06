@@ -46,3 +46,31 @@ body {
   box-shadow: 1px 1px 0px 0px #000000;
 }
 
+/* 3D flip cards for the Café memory game */
+.pixel-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.35s ease;
+  transform-style: preserve-3d;
+}
+
+.pixel-flip-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.pixel-flip-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.pixel-flip-back {
+  transform: rotateY(180deg);
+}
+

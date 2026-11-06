@@ -1,0 +1,10 @@
+{
+  "pairs": [
+    { "id": "kaffee", "article": "der", "german": "Kaffee", "english": "coffee", "emoji": "☕" },
+    { "id": "wasser", "article": "das", "german": "Wasser", "english": "water", "emoji": "💧" },
+    { "id": "apfelkuchen", "article": "der", "german": "Apfelkuchen", "english": "apple cake", "emoji": "🍰" },
+    { "id": "brezel", "article": "die", "german": "Brezel", "english": "pretzel", "emoji": "🥨" },
+    { "id": "brot", "article": "das", "german": "Brot", "english": "bread", "emoji": "🍞" },
+    { "id": "tee", "article": "der", "german": "Tee", "english": "tea", "emoji": "🍵" }
+  ]
+}

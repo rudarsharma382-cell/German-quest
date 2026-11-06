@@ -1,0 +1,78 @@
+{
+  "departures": [
+    { "train": "ICE 571", "destination": "Hamburg", "platform": 3, "time": "14:30" },
+    { "train": "RE 8", "destination": "Köln", "platform": 1, "time": "15:45" },
+    { "train": "ICE 204", "destination": "München", "platform": 2, "time": "16:10" },
+    { "train": "RB 22", "destination": "Bonn", "platform": 4, "time": "16:25" }
+  ],
+  "rounds": [
+    {
+      "id": 1,
+      "clerk": "Guten Tag! Wohin möchten Sie fahren?",
+      "clerkEn": "Good day! Where would you like to travel?",
+      "options": [
+        { "id": "a", "de": "Nach Hamburg, bitte.", "en": "To Hamburg, please.", "correct": true },
+        { "id": "b", "de": "Ich bin Hamburg.", "en": "I am Hamburg.", "correct": false },
+        { "id": "c", "de": "Hamburg ist um drei.", "en": "Hamburg is at three.", "correct": false }
+      ],
+      "explanation": "Use „nach“ + city name to say where you are going: „Nach Hamburg, bitte.“ = To Hamburg, please."
+    },
+    {
+      "id": 2,
+      "clerk": "Einfache Fahrt oder hin und zurück?",
+      "clerkEn": "One-way or round trip?",
+      "options": [
+        { "id": "a", "de": "Hin und zurück, bitte.", "en": "Round trip, please.", "correct": true },
+        { "id": "b", "de": "Ich fahre gern Zug.", "en": "I like riding train.", "correct": false },
+        { "id": "c", "de": "Das Gleis ist leer.", "en": "The platform is empty.", "correct": false }
+      ],
+      "explanation": "„hin und zurück“ = round trip · „einfache Fahrt“ = one-way ticket. Say „Hin und zurück, bitte.“ at the counter."
+    },
+    {
+      "id": 3,
+      "clerk": "Der ICE 571 fährt nach Hamburg. Auf welchem Gleis fährt er ab?",
+      "clerkEn": "The ICE 571 goes to Hamburg. Which platform does it depart from?",
+      "boardRef": "ICE 571",
+      "options": [
+        { "id": "a", "de": "Auf Gleis 3.", "en": "From platform 3.", "correct": true },
+        { "id": "b", "de": "Auf Gleis 1.", "en": "From platform 1.", "correct": false },
+        { "id": "c", "de": "Auf Gleis 4.", "en": "From platform 4.", "correct": false }
+      ],
+      "explanation": "Check the Abfahrtstafel: ICE 571 → Hamburg → Gleis 3. „das Gleis“ = the platform / track."
+    },
+    {
+      "id": 4,
+      "clerk": "Wann fährt der nächste Zug nach Köln?",
+      "clerkEn": "When does the next train to Cologne leave?",
+      "boardRef": "RE 8",
+      "options": [
+        { "id": "a", "de": "Um 15:45 Uhr.", "en": "At 15:45 (3:45 pm).", "correct": true },
+        { "id": "b", "de": "Um 14:30 Uhr.", "en": "At 14:30 (2:30 pm).", "correct": false },
+        { "id": "c", "de": "Um 16:10 Uhr.", "en": "At 16:10 (4:10 pm).", "correct": false }
+      ],
+      "explanation": "RE 8 nach Köln fährt um 15:45 Uhr von Gleis 1 ab. „Wann?“ = when · „um … Uhr“ = at … o'clock."
+    },
+    {
+      "id": 5,
+      "clerk": "Haben Sie Gepäck?",
+      "clerkEn": "Do you have any luggage?",
+      "options": [
+        { "id": "a", "de": "Ja, ich habe einen Koffer.", "en": "Yes, I have a suitcase.", "correct": true },
+        { "id": "b", "de": "Ja, ich habe ein Koffer.", "en": "Yes, I have a suitcase. (wrong article)", "correct": false },
+        { "id": "c", "de": "Nein, ich bin ein Koffer.", "en": "No, I am a suitcase.", "correct": false }
+      ],
+      "explanation": "„der Koffer“ is masculine. In the accusative it becomes „einen Koffer“: Ich habe einen Koffer."
+    },
+    {
+      "id": 6,
+      "clerk": "Das macht zwölf Euro fünfzig. Möchten Sie mit Karte zahlen?",
+      "clerkEn": "That comes to twelve euros fifty. Would you like to pay by card?",
+      "options": [
+        { "id": "a", "de": "Nein, ich zahle bar. Hier bitte.", "en": "No, I'll pay cash. Here you go.", "correct": true },
+        { "id": "b", "de": "Ja, ich bin zwölf Euro.", "en": "Yes, I am twelve euros.", "correct": false },
+        { "id": "c", "de": "Das Gleis kostet fünfzig.", "en": "The platform costs fifty.", "correct": false }
+      ],
+      "explanation": "„bar zahlen“ = pay cash · „mit Karte zahlen“ = pay by card · „Hier bitte“ = here you go."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "sentences": [
+    {
+      "id": 1,
+      "words": ["Ich", "lerne", "Deutsch", "in", "der", "Bibliothek"],
+      "english": "I am learning German in the library.",
+      "hint": "The verb 'lerne' must be in second position."
+    },
+    {
+      "id": 2,
+      "words": ["Der", "Bäcker", "verkauft", "frisches", "Brot"],
+      "english": "The baker sells fresh bread.",
+      "hint": "Start with the subject 'Der Bäcker', then the verb 'verkauft'."
+    },
+    {
+      "id": 3,
+      "words": ["Wir", "fahren", "morgen", "mit", "dem", "Zug", "nach", "Berlin"],
+      "english": "We are going to Berlin by train tomorrow.",
+      "hint": "German word order: time (morgen) → manner (mit dem Zug) → place (nach Berlin)."
+    },
+    {
+      "id": 4,
+      "words": ["Meine", "Schwester", "liest", "ein", "spannendes", "Buch"],
+      "english": "My sister is reading an exciting book.",
+      "hint": "'liest' is the verb in second position. 'Buch' is neuter: ein spannendes Buch."
+    },
+    {
+      "id": 5,
+      "words": ["Kannst", "du", "mir", "bitte", "helfen"],
+      "english": "Can you please help me?",
+      "hint": "In a yes/no question the modal verb 'Kannst' comes first. 'mir' is dative."
+    },
+    {
+      "id": 6,
+      "words": ["Das", "Museum", "ist", "am", "Montag", "geschlossen"],
+      "english": "The museum is closed on Monday.",
+      "hint": "Use 'am' + day: am Montag. The verb 'ist' stays in second position."
+    }
+  ]
+}
