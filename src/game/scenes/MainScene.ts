@@ -71,6 +71,18 @@ export class MainScene extends Phaser.Scene {
 
     // Load 3/4 top-down landmark Sprachschule
     this.load.image('sprachschule', '/assets/buildings/sprachschule_topdown.png');
+
+    // Load isometric town-institution artwork (fall back to procedural textures if absent)
+    this.load.image('rathaus_art', '/assets/buildings/rathaus.png');
+    this.load.image('museum_art', '/assets/buildings/museum.png');
+    this.load.image('bibliothek_art', '/assets/buildings/bibliothek.png');
+    this.load.image('cafe_art', '/assets/buildings/cafe.png');
+    this.load.image('baeckerei_art', '/assets/buildings/baeckerei.png');
+    this.load.image('bahnhof_art', '/assets/buildings/bahnhof.png');
+
+    // Bahnhof set pieces cropped from the station artwork
+    this.load.image('bahnhof_train_art', '/assets/buildings/bahnhoff_train.png');
+    this.load.image('bahnhof_platform_art', '/assets/buildings/bahnhoff_platform.png');
   }
 
   create() {
@@ -153,22 +165,16 @@ export class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(schoolY + 1);
 
-    // B. GESCHICHTSMUSEUM (Northeast Landmark - Procedural Pixel-Art Neoclassical at X: 1150, Y: 340)
+    // B. GESCHICHTSMUSEUM (Northeast Landmark - isometric artwork at X: 1150, base Y: 340)
     const museumX = 1150;
     const museumY = 340;
-    this.museumBuilding = this.physics.add.staticImage(museumX, museumY, 'museum_building');
-    this.museumBuilding.setOrigin(0.5, 1);
-    this.museumBuilding.setDepth(museumY);
-
-    const museumBody = this.museumBuilding.body as Phaser.Physics.Arcade.StaticBody;
-    museumBody.setSize(96, 32);
-    museumBody.setOffset(4, 52);
+    this.museumBuilding = this.placeBuilding(museumX, museumY, 'museum_art', 'museum_building');
 
     this.museumDoorTrigger = this.add.zone(museumX, museumY + 5, 52, 32);
     this.physics.world.enable(this.museumDoorTrigger, Phaser.Physics.Arcade.STATIC_BODY);
 
     this.add
-      .text(museumX, museumY - 95, 'GESCHICHTSMUSEUM', {
+      .text(museumX, museumY - this.museumBuilding.displayHeight - 12, 'GESCHICHTSMUSEUM', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#fef08a',
@@ -178,14 +184,12 @@ export class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(museumY + 1);
 
-    // C. BÄCKEREI (West Avenue - X: 500, Y: 360)
+    // C. BÄCKEREI (West Avenue - X: 500, base Y: 400)
     const bakeryX = 500;
-    const bakeryY = 360;
-    this.bakeryBuilding = this.physics.add.staticImage(bakeryX, bakeryY, 'bakery_building');
-    this.bakeryBuilding.setSize(76, 70);
-    this.bakeryBuilding.setDepth(bakeryY);
+    const bakeryY = 400;
+    this.bakeryBuilding = this.placeBuilding(bakeryX, bakeryY, 'baeckerei_art', 'bakery_building');
     this.add
-      .text(bakeryX, bakeryY - 44, 'BÄCKEREI', {
+      .text(bakeryX, bakeryY - this.bakeryBuilding.displayHeight - 12, 'BÄCKEREI', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#facc15',
@@ -195,14 +199,12 @@ export class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(bakeryY + 1);
 
-    // D. BIBLIOTHEK (East Central - X: 908, Y: 360)
+    // D. BIBLIOTHEK (East Central - X: 908, base Y: 400)
     const libraryX = 908;
-    const libraryY = 360;
-    this.libraryBuilding = this.physics.add.staticImage(libraryX, libraryY, 'library_building');
-    this.libraryBuilding.setSize(80, 70);
-    this.libraryBuilding.setDepth(libraryY);
+    const libraryY = 400;
+    this.libraryBuilding = this.placeBuilding(libraryX, libraryY, 'bibliothek_art', 'library_building');
     this.add
-      .text(libraryX, libraryY - 44, 'BIBLIOTHEK', {
+      .text(libraryX, libraryY - this.libraryBuilding.displayHeight - 12, 'BIBLIOTHEK', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#93c5fd',
@@ -212,14 +214,12 @@ export class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(libraryY + 1);
 
-    // E. RATHAUS (North Center - X: 704, Y: 210)
+    // E. RATHAUS (North Center - X: 704, base Y: 252)
     const rathausX = 704;
-    const rathausY = 210;
-    this.townHallBuilding = this.physics.add.staticImage(rathausX, rathausY, 'town_hall_building');
-    this.townHallBuilding.setSize(108, 80);
-    this.townHallBuilding.setDepth(rathausY);
+    const rathausY = 252;
+    this.townHallBuilding = this.placeBuilding(rathausX, rathausY, 'rathaus_art', 'town_hall_building');
     this.add
-      .text(rathausX, rathausY - 52, 'RATHAUS', {
+      .text(rathausX, rathausY - this.townHallBuilding.displayHeight - 12, 'RATHAUS', {
         fontFamily: 'monospace',
         fontSize: '11px',
         color: '#fde047',
@@ -229,14 +229,12 @@ export class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(rathausY + 1);
 
-    // F. CAFÉ GEMÜTLICHKEIT (Southeast - X: 908, Y: 700)
+    // F. CAFÉ GEMÜTLICHKEIT (Southeast - X: 908, base Y: 736)
     const cafeX = 908;
-    const cafeY = 700;
-    this.cafeBuilding = this.physics.add.staticImage(cafeX, cafeY, 'cafe_building');
-    this.cafeBuilding.setSize(76, 68);
-    this.cafeBuilding.setDepth(cafeY);
+    const cafeY = 736;
+    this.cafeBuilding = this.placeBuilding(cafeX, cafeY, 'cafe_art', 'cafe_building');
     this.add
-      .text(cafeX, cafeY - 40, 'CAFÉ', {
+      .text(cafeX, cafeY - this.cafeBuilding.displayHeight - 12, 'CAFÉ', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#bbf7d0',
@@ -246,14 +244,12 @@ export class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(cafeY + 1);
 
-    // G. BAHNHOF (Main Station - Southwest - X: 470, Y: 750)
+    // G. BAHNHOF (Main Station - Southwest - X: 470, base Y: 814)
     const bahnhofX = 470;
-    const bahnhofY = 750;
-    this.bahnhofBuilding = this.physics.add.staticImage(bahnhofX, bahnhofY, 'bahnhof_building');
-    this.bahnhofBuilding.setSize(150, 96);
-    this.bahnhofBuilding.setDepth(bahnhofY);
+    const bahnhofY = 814;
+    this.bahnhofBuilding = this.placeBuilding(bahnhofX, bahnhofY, 'bahnhof_art', 'bahnhof_building');
     this.add
-      .text(bahnhofX, bahnhofY - 24, 'BAHNHOF', {
+      .text(bahnhofX, bahnhofY - this.bahnhofBuilding.displayHeight - 12, 'BAHNHOF', {
         fontFamily: 'monospace',
         fontSize: '11px',
         color: '#fde047',
@@ -533,15 +529,48 @@ export class MainScene extends Phaser.Scene {
   }
 
   /**
+   * Place a building so its artwork rests on baseY, with a collision body that
+   * covers only the ground-level footprint (so the player can walk behind roofs).
+   */
+  private placeBuilding(
+    x: number,
+    baseY: number,
+    artworkKey: string,
+    fallbackKey: string
+  ): Phaser.Physics.Arcade.Image {
+    const key = this.textures.exists(artworkKey) ? artworkKey : fallbackKey;
+    const source = this.textures.get(key).getSourceImage() as HTMLImageElement;
+    const width = source.width;
+    const height = source.height;
+
+    const building = this.physics.add.staticImage(x, baseY - height / 2, key);
+    const body = building.body as Phaser.Physics.Arcade.StaticBody;
+    body.setSize(width * 0.9, height * 0.24);
+    body.setOffset(width * 0.05, height * 0.74);
+    building.setDepth(baseY);
+
+    // Contact shadow so the artwork sits on the ground instead of floating.
+    this.add
+      .ellipse(x, baseY - height * 0.02, width * 0.9, height * 0.17, 0x000000, 0.32)
+      .setDepth(baseY - 1);
+
+    return building;
+  }
+
+  /**
    * Bahnhof platform, rails, train and station master
    */
   private createBahnhofArea() {
     const tileSize = 32;
 
-    // Platform tiles (tiles x 11..19, rows 28..29)
-    for (let x = 11; x <= 19; x++) {
-      for (let y = 28; y <= 29; y++) {
-        this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'platform_tile');
+    // Platform: single strip cropped from the station artwork (falls back to tiles)
+    if (this.textures.exists('bahnhof_platform_art')) {
+      this.add.image(496, 928, 'bahnhof_platform_art');
+    } else {
+      for (let x = 11; x <= 19; x++) {
+        for (let y = 28; y <= 29; y++) {
+          this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'platform_tile');
+        }
       }
     }
 
@@ -556,7 +585,8 @@ export class MainScene extends Phaser.Scene {
     }
 
     // The train
-    this.train = this.physics.add.staticImage(600, 998, 'train_complete');
+    const trainKey = this.textures.exists('bahnhof_train_art') ? 'bahnhof_train_art' : 'train_complete';
+    this.train = this.physics.add.staticImage(600, 998, trainKey);
     this.train.setSize(320, 44);
 
     // Steam puffs rising from the chimney

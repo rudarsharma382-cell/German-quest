@@ -15,6 +15,17 @@ import {
 } from 'lucide-react';
 import { soundFx } from '@/utils/audio';
 
+// Artwork shown beside the zone marker so the HUD reflects the building you are standing at.
+const ZONE_ART: Record<string, string> = {
+  Sprachschule: '/assets/buildings/sprachschule_topdown.png',
+  Geschichtsmuseum: '/assets/buildings/museum.png',
+  Bahnhof: '/assets/buildings/bahnhof.png',
+  'Café Gemütlichkeit': '/assets/buildings/cafe.png',
+  Bäckerei: '/assets/buildings/baeckerei.png',
+  Bibliothek: '/assets/buildings/bibliothek.png',
+  Rathaus: '/assets/buildings/rathaus.png',
+};
+
 export default function HUD() {
   const {
     xp,
@@ -34,6 +45,7 @@ export default function HUD() {
 
   const xpCurrent = xp % 100;
   const xpPercent = Math.min(100, Math.max(0, xpCurrent));
+  const zoneArt = ZONE_ART[currentZone];
 
   // Find first uncompleted quest
   const activeQuest = quests.find((q) => !q.completed) || quests[quests.length - 1];
@@ -160,7 +172,15 @@ export default function HUD() {
 
             {/* Zone Marker */}
             <div className="pointer-events-auto bg-slate-900 border-4 border-black p-2.5 shadow-pixel flex items-center gap-2 text-xs">
-              <MapPin className="w-4 h-4 text-red-500 animate-bounce" />
+              {zoneArt ? (
+                <img
+                  src={zoneArt}
+                  alt=""
+                  className="h-9 w-9 shrink-0 border-2 border-black bg-slate-950 object-contain [image-rendering:pixelated]"
+                />
+              ) : (
+                <MapPin className="w-4 h-4 text-red-500 animate-bounce" />
+              )}
               <div>
                 <div className="text-[11px] text-white">Deutschstadt</div>
                 <div className="text-[9px] text-slate-400">{currentZone}</div>
