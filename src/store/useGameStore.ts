@@ -108,7 +108,7 @@ export const useGameStore = create<GameState>((set) => ({
   quests: defaultQuests as Quest[],
   historyJournal: [],
   soundEnabled: true,
-  virtualControlsEnabled: false,
+  virtualControlsEnabled: true,
 
   activeOverlay: 'none',
   currentDialogue: null,

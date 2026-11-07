@@ -28,7 +28,7 @@ const Game = dynamic(() => import('@/components/game/Game'), {
 
 export default function Home() {
   return (
-    <main className="relative h-screen w-screen overflow-hidden bg-slate-950">
+    <main className="fixed inset-0 h-screen w-screen overflow-hidden bg-slate-950 select-none">
       {/* 1. Phaser 3 Canvas Layer */}
       <Game />
 
