@@ -220,18 +220,17 @@ export default function HUD() {
         </div>
       )}
 
-      {/* Bottom Corner Control Hint (hidden while the touch gamepad is visible) */}
-      {!virtualControlsEnabled && (
-        <div className="flex justify-between items-end">
-          <div className="bg-slate-900/90 border-4 border-black text-[10px] text-slate-300 px-3 py-1.5 shadow-pixel flex items-center gap-3">
-            <div>
-              <span className="text-amber-400 font-bold">[WASD / ⬆️⬇️⬅️➡️]</span> Bewegen &bull;{' '}
-              <span className="text-amber-400 font-bold">[SPACE / ENTER]</span> Interagieren &bull;{' '}
-              <span className="text-amber-400 font-bold">[I]</span> Rucksack
-            </div>
+      {/* Bottom Center Control Hint (comfortably centered between joystick and action buttons) */}
+      <div className="flex justify-center items-end w-full pb-1 pointer-events-none">
+        <div className="pointer-events-auto bg-slate-900/90 border-4 border-black text-[9px] sm:text-[10px] text-slate-300 px-3 py-1.5 shadow-pixel flex items-center gap-2 max-w-[85vw] text-center">
+          <div>
+            <span className="text-amber-400 font-bold">[WASD / 🕹️]</span> Bewegen &bull;{' '}
+            <span className="text-amber-400 font-bold">[SPACE / A]</span> Aktion &bull;{' '}
+            <span className="text-amber-400 font-bold">[I]</span> Rucksack &bull;{' '}
+            <span className="text-amber-400 font-bold">[G]</span> Touchpad
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

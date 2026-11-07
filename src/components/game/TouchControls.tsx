@@ -35,7 +35,7 @@ export default function TouchControls() {
   const visible = virtualControlsEnabled && activeOverlay === 'none';
   const canInteract = Boolean(interactionPrompt);
 
-  // Restore the saved preference, or switch on automatically for touch screens.
+  // Always enable by default unless explicitly turned off
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -43,17 +43,13 @@ export default function TouchControls() {
     try {
       stored = window.localStorage.getItem(STORAGE_KEY);
     } catch {
-      // Storage may be blocked; fall back to auto-detection for this session.
+      // Storage may be blocked
     }
 
-    if (stored === 'on') {
-      setVirtualControlsEnabled(true);
-    } else if (stored === 'off') {
+    if (stored === 'off') {
       setVirtualControlsEnabled(false);
     } else {
-      const isTouchDevice =
-        window.matchMedia?.('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
-      if (isTouchDevice) setVirtualControlsEnabled(true);
+      setVirtualControlsEnabled(true);
     }
   }, [setVirtualControlsEnabled]);
 
@@ -102,10 +98,10 @@ export default function TouchControls() {
 
   if (!visible) return null;
 
-  const bottom = 'calc(1.25rem + env(safe-area-inset-bottom, 0px))';
+  const bottom = 'calc(1.5rem + env(safe-area-inset-bottom, 0px))';
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-30 font-pixel select-none">
+    <div className="pointer-events-none fixed inset-0 z-50 font-pixel select-none">
       {/* Movement joystick */}
       <div className="pointer-events-auto absolute left-4" style={{ bottom, width: BASE_SIZE }}>
         <div
