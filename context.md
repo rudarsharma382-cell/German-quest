@@ -73,9 +73,9 @@
 > All five institutions now launch a dedicated React minigame overlay. Shared shell + intro UI lives in `src/components/minigames/MinigameFrame.tsx`; pixel portraits for the hosts are in `public/characters/` (`Weber.svg`, `Schmidt.svg`, `Mueller.svg`, `Braun.svg`).
 
 ### Institution artwork
-The town institutions render from isometric artwork cut out of `assets/Gemini_Generated_Image_4dtuny4dtuny4dtu.png` and served from `public/assets/buildings/`: `rathaus.png`, `museum.png`, `bibliothek.png`, `cafe.png`, `baeckerei.png` and `bahnhof.png`. `MainScene.placeBuilding()` base-anchors each sprite (bottom edge on the institution's ground Y), installs a collision body over the lower 24% only so the player can walk behind roofs, and drops a contact-shadow ellipse underneath.
+The town institutions render from isometric artwork cut out of `assets/Gemini_Generated_Image_4dtuny4dtuny4dtu.png` and served from `public/assets/buildings/`: `rathaus.png`, `museum.png`, `bibliothek.png`, `cafe.png`, `baeckerei.png` and `bahnhof.png`. `MainScene.placeBuilding()` base-anchors each sprite (bottom edge on the institution's ground Y), installs a collision body over the lower 18% (70% of the sprite width, centred) so the player can walk behind roofs but never at the art's transparent corners, and drops a soft radial contact shadow (`contact_shadow`, generated on a canvas texture) underneath to ground it.
 
-The Bahnhof set pieces come from `assets/Pasted 2026-11-07 at 12.25.12 PM.png`: `bahnhoff_train.png` (320×59) replaces the procedural train, `bahnhoff_platform.png` (288×54) replaces the platform tiles on Gleis 1. All procedural textures are kept as fallbacks when an artwork file is missing.
+The Bahnhof set piece comes from `assets/Pasted 2026-11-07 at 12.25.12 PM.png`: `bahnhoff_train.png` (320×51) replaces the procedural train and sits on the rebuilt track. The track itself is fully procedural (`createBahnhofArea`): a `rail_ballast` gravel TileSprite, `rail_sleeper` timber repeated every 16 px, two steel rails drawn as long rectangles, and earth/grass tufts along both edges so the bed blends into the lawn. It runs edge to edge across the map, with the sandstone `platform_tile` platform, yellow safety line, raised front face and cast shadow above it. All procedural textures are kept as fallbacks when an artwork file is missing.
 
 ---
 

@@ -80,9 +80,8 @@ export class MainScene extends Phaser.Scene {
     this.load.image('baeckerei_art', '/assets/buildings/baeckerei.png');
     this.load.image('bahnhof_art', '/assets/buildings/bahnhof.png');
 
-    // Bahnhof set pieces cropped from the station artwork
+    // Bahnhof set piece cropped from the station artwork
     this.load.image('bahnhof_train_art', '/assets/buildings/bahnhoff_train.png');
-    this.load.image('bahnhof_platform_art', '/assets/buildings/bahnhoff_platform.png');
   }
 
   create() {
@@ -148,8 +147,8 @@ export class MainScene extends Phaser.Scene {
       this.schoolBuilding.setDepth(schoolY);
 
       const schoolBody = this.schoolBuilding.body as Phaser.Physics.Arcade.StaticBody;
-      schoolBody.setSize(this.schoolBuilding.width * 0.92, this.schoolBuilding.height * 0.30);
-      schoolBody.setOffset(this.schoolBuilding.width * 0.04, this.schoolBuilding.height * 0.70);
+      schoolBody.setSize(this.schoolBuilding.width * 0.7, this.schoolBuilding.height * 0.18);
+      schoolBody.setOffset(this.schoolBuilding.width * 0.15, this.schoolBuilding.height * 0.8);
     }
     this.schoolDoorTrigger = this.add.zone(schoolX, schoolY + 5, 48, 32);
     this.physics.world.enable(this.schoolDoorTrigger, Phaser.Physics.Arcade.STATIC_BODY);
@@ -260,7 +259,7 @@ export class MainScene extends Phaser.Scene {
       .setDepth(bahnhofY + 1);
 
     // Platform, rails, train and station master
-    this.createBahnhofArea();
+    this.createBahnhofArea(worldWidth);
 
     // 4. CHERRY BLOSSOM TREES (Kirschblüten-Bäume flanking pathways and plaza)
     const cherryTreeCoords = [
@@ -545,14 +544,23 @@ export class MainScene extends Phaser.Scene {
 
     const building = this.physics.add.staticImage(x, baseY - height / 2, key);
     const body = building.body as Phaser.Physics.Arcade.StaticBody;
-    body.setSize(width * 0.9, height * 0.24);
-    body.setOffset(width * 0.05, height * 0.74);
+    // Tight footprint: the visible base is a diamond, so a full-width box would
+    // create invisible walls at the sprite's corners.
+    body.setSize(width * 0.7, height * 0.18);
+    body.setOffset(width * 0.15, height * 0.8);
     building.setDepth(baseY);
 
-    // Contact shadow so the artwork sits on the ground instead of floating.
-    this.add
-      .ellipse(x, baseY - height * 0.02, width * 0.9, height * 0.17, 0x000000, 0.32)
-      .setDepth(baseY - 1);
+    // Contact shadow: a soft radial pool plus a tighter core where the walls
+    // meet the ground, so the sprite reads as standing on the tile.
+    const cast = this.add.image(x + width * 0.02, baseY - height * 0.035, 'contact_shadow');
+    cast.setDisplaySize(width * 1.02, height * 0.2);
+    cast.setAlpha(0.85);
+    cast.setDepth(baseY - 3);
+
+    const contact = this.add.image(x + width * 0.02, baseY - height * 0.005, 'contact_shadow');
+    contact.setDisplaySize(width * 0.62, height * 0.09);
+    contact.setAlpha(0.7);
+    contact.setDepth(baseY - 2);
 
     return building;
   }
@@ -560,42 +568,63 @@ export class MainScene extends Phaser.Scene {
   /**
    * Bahnhof platform, rails, train and station master
    */
-  private createBahnhofArea() {
+  private createBahnhofArea(worldWidth: number) {
     const tileSize = 32;
 
-    // Platform: single strip cropped from the station artwork (falls back to tiles)
-    if (this.textures.exists('bahnhof_platform_art')) {
-      this.add.image(496, 928, 'bahnhof_platform_art');
-    } else {
-      for (let x = 11; x <= 19; x++) {
-        for (let y = 28; y <= 29; y++) {
-          this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'platform_tile');
-        }
+    // Track bed (rows 30..31): ballast → sleepers → twin rails, running off both
+    // map edges so the line never dead-ends in mid-air.
+    const trackX = worldWidth / 2;
+    const trackWidth = worldWidth;
+    this.add.tileSprite(trackX, 31 * tileSize, trackWidth, 2 * tileSize, 'rail_ballast');
+    // Earth edging so the bed blends into the grass instead of reading as a slab
+    this.add.rectangle(trackX, 30 * tileSize + 1, trackWidth, 3, 0x6b5a3e);
+    this.add.rectangle(trackX, 32 * tileSize - 1, trackWidth, 3, 0x6b5a3e);
+    // Ragged grass tufts along both edges to break the straight line
+    for (let i = 0; i < worldWidth / 11; i++) {
+      const gx = i * 11 + ((i * 7) % 5);
+      const th = 2 + ((i * 3) % 3);
+      this.add.rectangle(gx, 30 * tileSize + 1 + ((i * 5) % 3), 5, th + 1, 0x3ea856);
+      this.add.rectangle(gx + 3, 32 * tileSize - 1 - ((i * 2) % 3), 5, th + 1, 0x35934a);
+    }
+    this.add.tileSprite(trackX, 30 * tileSize + tileSize - 4, trackWidth, 44, 'rail_sleeper');
+    [30 * tileSize + 23, 30 * tileSize + 41].forEach((ry) => {
+      this.add.rectangle(trackX, ry + 1, trackWidth, 5, 0x3b424d);
+      this.add.rectangle(trackX, ry, trackWidth, 2, 0xc9d2dc);
+    });
+
+    // Platform tiles (tiles x 11..19, rows 28..29), drawn above the bed
+    for (let x = 11; x <= 19; x++) {
+      for (let y = 28; y <= 29; y++) {
+        this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'platform_tile');
       }
     }
 
     // Yellow safety line along the track edge
     this.add.rectangle(496, 957, 9 * tileSize, 5, 0xfacc15);
 
-    // Rails (tiles x 4..27, rows 30..31)
-    for (let x = 4; x <= 27; x++) {
-      for (let y = 30; y <= 31; y++) {
-        this.add.image(x * tileSize + tileSize / 2, y * tileSize + tileSize / 2, 'rail_tile');
-      }
-    }
+    // Platform face + its cast shadow onto the track bed
+    this.add.rectangle(496, 963, 9 * tileSize, 6, 0x8d8a76);
+    this.add.rectangle(496, 966, 9 * tileSize, 2, 0x6f6c5b);
+    const platformShadow = this.add.image(496, 974, 'contact_shadow');
+    platformShadow.setDisplaySize(9 * tileSize + 16, 22);
+    platformShadow.setAlpha(0.7);
 
-    // The train
+    // The train, wheels sitting on the near rail
     const trainKey = this.textures.exists('bahnhof_train_art') ? 'bahnhof_train_art' : 'train_complete';
-    this.train = this.physics.add.staticImage(600, 998, trainKey);
+    const trainShadow = this.add.image(600, 1006, 'contact_shadow');
+    trainShadow.setDisplaySize(364, 38);
+    trainShadow.setAlpha(0.95);
+    trainShadow.setDepth(1);
+    this.train = this.physics.add.staticImage(600, 976, trainKey);
     this.train.setSize(320, 44);
 
     // Steam puffs rising from the chimney
     for (let i = 0; i < 3; i++) {
-      const puff = this.add.circle(456, 966, 5, 0xf1f5f9, 0.75);
+      const puff = this.add.circle(470, 952, 5, 0xf1f5f9, 0.75);
       this.tweens.add({
         targets: puff,
-        y: 905,
-        x: 438 + i * 16,
+        y: 895,
+        x: 452 + i * 16,
         alpha: 0,
         scale: 2.4,
         duration: 2300,
@@ -1090,42 +1119,67 @@ export class MainScene extends Phaser.Scene {
     bahnhofG.generateTexture('bahnhof_building', 160, 128);
     bahnhofG.destroy();
 
-    // 17. Platform & Rail Tiles
+    // 17. Platform & Rail Tiles (rebuilt to sit under the station train artwork)
     const platformG = this.make.graphics({ x: 0, y: 0 });
-    platformG.fillStyle(0x9ca3af, 1);
+    // Sandstone slabs
+    platformG.fillStyle(0xa9a58f, 1);
     platformG.fillRect(0, 0, 32, 32);
-    platformG.fillStyle(0xb6bcc6, 1);
-    platformG.fillRect(2, 4, 9, 2);
-    platformG.fillRect(18, 11, 9, 2);
-    platformG.fillRect(6, 21, 8, 2);
-    platformG.fillStyle(0x7c8391, 1);
-    platformG.fillRect(0, 31, 32, 1);
-    platformG.fillRect(15, 2, 1, 28);
+    platformG.fillStyle(0x8d8a76, 1);
+    platformG.fillRect(0, 15, 32, 2); // horizontal seam
+    platformG.fillRect(15, 0, 2, 16); // vertical seams, offset per course
+    platformG.fillRect(7, 17, 2, 15);
+    platformG.fillRect(23, 17, 2, 15);
+    platformG.fillStyle(0xc4c1ab, 1); // worn slab highlights
+    platformG.fillRect(2, 2, 11, 2);
+    platformG.fillRect(18, 2, 11, 2);
+    platformG.fillRect(9, 18, 12, 2);
+    platformG.fillStyle(0xe6e3d0, 1); // kerb highlight along the top edge
+    platformG.fillRect(0, 0, 32, 1);
     platformG.generateTexture('platform_tile', 32, 32);
     platformG.destroy();
 
-    const railG = this.make.graphics({ x: 0, y: 0 });
-    railG.fillStyle(0x4b5563, 1);
-    railG.fillRect(0, 0, 32, 32);
-    railG.fillStyle(0x374151, 1);
-    railG.fillRect(3, 4, 6, 4);
-    railG.fillRect(19, 15, 7, 4);
-    railG.fillRect(8, 26, 5, 3);
-    railG.fillStyle(0x5b3a1e, 1);
-    railG.fillRect(2, 0, 5, 32);
-    railG.fillRect(13, 0, 5, 32);
-    railG.fillRect(24, 0, 5, 32);
-    railG.fillStyle(0x9ca3af, 1);
-    railG.fillRect(0, 8, 32, 4);
-    railG.fillRect(0, 20, 32, 4);
-    railG.fillStyle(0xe5e7eb, 1);
-    railG.fillRect(0, 8, 32, 1);
-    railG.fillRect(0, 20, 32, 1);
-    railG.fillStyle(0x4b5563, 1);
-    railG.fillRect(0, 11, 32, 1);
-    railG.fillRect(0, 23, 32, 1);
-    railG.generateTexture('rail_tile', 32, 32);
-    railG.destroy();
+    // Gravel ballast bed (tiles seamlessly across the whole track)
+    const ballastG = this.make.graphics({ x: 0, y: 0 });
+    ballastG.fillStyle(0x5f646d, 1);
+    ballastG.fillRect(0, 0, 32, 32);
+    ballastG.fillStyle(0x6e747e, 1);
+    [
+      [2, 3], [9, 7], [17, 2], [24, 9], [5, 14], [13, 18],
+      [21, 22], [28, 16], [3, 26], [11, 29], [19, 26], [26, 30],
+    ].forEach(([px, py]) => ballastG.fillRect(px, py, 3, 2));
+    ballastG.fillStyle(0x4c5158, 1);
+    [
+      [6, 5], [14, 11], [22, 4], [1, 20], [10, 24],
+      [25, 20], [17, 31], [29, 26], [8, 17], [20, 12],
+    ].forEach(([px, py]) => ballastG.fillRect(px, py, 2, 2));
+    ballastG.generateTexture('rail_ballast', 32, 32);
+    ballastG.destroy();
+
+    // A single wooden sleeper, repeated every 16px by a TileSprite
+    const sleeperG = this.make.graphics({ x: 0, y: 0 });
+    sleeperG.fillStyle(0x4a2f18, 1);
+    sleeperG.fillRect(0, 1, 10, 42);
+    sleeperG.fillStyle(0x7a5230, 1);
+    sleeperG.fillRect(1, 2, 7, 40);
+    sleeperG.fillStyle(0x8d6038, 1);
+    sleeperG.fillRect(2, 3, 2, 38);
+    sleeperG.generateTexture('rail_sleeper', 16, 44);
+    sleeperG.destroy();
+
+    // Soft radial shadow used to ground buildings and the train
+    if (!this.textures.exists('contact_shadow')) {
+      const shadowTex = this.textures.createCanvas('contact_shadow', 128, 128);
+      if (shadowTex) {
+        const ctx = shadowTex.getContext();
+        const grad = ctx.createRadialGradient(64, 64, 2, 64, 64, 62);
+        grad.addColorStop(0, 'rgba(0,0,0,0.62)');
+        grad.addColorStop(0.55, 'rgba(0,0,0,0.32)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 128, 128);
+        shadowTex.refresh();
+      }
+    }
 
     // 18. Steam Train (336x60)
     const trainG = this.make.graphics({ x: 0, y: 0 });
